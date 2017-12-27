@@ -216,13 +216,17 @@
                 type : 'GET',
                 url  : url,
                 success: function(data) {
-                    var physical  = data['physical_quantity'];
-                    var unit_type = data['unit_type'];
+                    if(supplier == 'DryGoods Material')
+                    {
+                        var physical  = data['physical_quantity'];
+                        var unit_type = data['unit_type'];
 
-                    units(physical);
+                        units(physical);
 
-                    $('#physical_quantity').val(physical);
-                    $('#unit_type').val(unit_type);
+                        $('#physical_quantity').val(physical);
+                        $('#unit_type').val(unit_type);
+                    }
+                    
 
                 }
             });

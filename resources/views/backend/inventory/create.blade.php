@@ -217,20 +217,24 @@
 
         function getCurrentUnit(id, supplier, )
         {
-            var url = '{{ URL::to("admin/commissary/inventory/get_unit/") }}/' + id + '/' + supplier;
+            var url = '{{ URL::to("admin/pos/inventory/get_unit/") }}/' + id + '/' + supplier;
 
             $.ajax({
                 type : 'GET',
                 url  : url,
                 success: function(data) {
-                    var physical  = data['physical_quantity'];
-                    var unit_type = data['unit_type'];
+                    console.log(data);
 
-                    units(physical);
+                    if(supplier != 'Other')
+                    {
+                        var physical  = data['physical_quantity'];
+                        var unit_type = data['unit_type'];
 
-                    $('#physical_quantity').val(physical);
-                    $('#unit_type').val(unit_type);
+                        units(physical);
 
+                        $('#physical_quantity').val(physical);
+                        $('#unit_type').val(unit_type);
+                    }
                 }
             });
         }
