@@ -18,9 +18,8 @@ class DeliveryController extends Controller
 
 	public function create(){
 		$inventories = Inventory::orderBy('name')->get()->pluck('name', 'id');
-        $branches 	 = Branch::orderBy('name')->get()->pluck('name', 'id');
 		// return $unions;
-		return view('backend.dry_good.delivery.create', compact('inventories', 'branches'));
+		return view('backend.dry_good.delivery.create', compact('inventories'));
 	}
 
 	public function store(Request $request){
