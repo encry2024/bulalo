@@ -32,7 +32,6 @@
                         <th>TOTAL COST</th>
                         <th>REASON</th>
                         <th>WITNESS</th>
-                        <th>BRANCH</th>
                         <th>&nbsp;</th>
                     </tr>
                     </thead>
@@ -54,15 +53,14 @@
                 serverSide: true,
                 ajax: '{!! route('admin.commissary.dispose.get') !!}',
                 columns: [
-                    { data: 13 },
+                    { data: 12 },
                     { data: 2 },
                     { data: 3 },
                     { data: 4 },
                     { data: 5 },
                     { data: 6 },
                     { data: 7 },
-                    { data: '12.name' },
-                    { data: 14 }
+                    { data: 13 }
                 ],
                 order: [1, 'asc']
             });

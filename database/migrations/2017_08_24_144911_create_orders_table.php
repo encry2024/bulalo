@@ -22,6 +22,7 @@ class CreateOrdersTable extends Migration
             $table->decimal('discount', 10, 2);
             $table->integer('user_id')->unsigned();
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 

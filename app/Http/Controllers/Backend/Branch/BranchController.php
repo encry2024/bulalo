@@ -35,7 +35,7 @@ class BranchController extends Controller
 	}
 
 	public function destroy(Branch $branch){
-    	$branch->delete();
+    	$branch->softDeletes();
 
     	return redirect()->route('admin.branch.index')->withFlashSuccess('Branch has been deleted!');
     }

@@ -19,6 +19,7 @@ class CreateResponsesTable extends Migration
             $table->string('message');
             $table->string('status');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 

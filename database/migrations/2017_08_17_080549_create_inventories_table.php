@@ -17,6 +17,7 @@ class CreateinventoriesTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
         //
         Schema::create('inventories', function (Blueprint $table) {
@@ -29,12 +30,14 @@ class CreateinventoriesTable extends Migration
             $table->string('physical_quantity');
             $table->integer('category_id')->unsigned();
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
 
         Schema::create('other_inventories', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 

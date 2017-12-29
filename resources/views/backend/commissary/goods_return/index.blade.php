@@ -53,14 +53,14 @@
                 serverSide: true,
                 ajax: '{!! route('admin.commissary.goods_return.get') !!}',
                 columns: [
-                    { data: 10 },
+                    { data: 11 },
                     { data: 2 },
                     { data: 3 },
                     { data: 4 },
                     { data: 5 },
                     { data: 6 },
                     { data: 7 },
-                    { data: 11 }
+                    { data: 12 }
                 ],
                 order: [1, 'asc']
             });

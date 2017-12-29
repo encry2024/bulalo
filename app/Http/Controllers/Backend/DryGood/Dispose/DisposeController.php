@@ -16,9 +16,8 @@ class DisposeController extends Controller
 
     public function create(){
     	$inventories = Inventory::orderBy('name')->get()->pluck('name', 'id');
-        $branches    = Branch::orderBy('name')->get()->pluck('name', 'id');
 
-    	return view('backend.dry_good.dispose.create', compact('inventories', 'products', 'branches'));
+    	return view('backend.dry_good.dispose.create', compact('inventories', 'products'));
     }
 
     public function store(Request $request){

@@ -19,6 +19,7 @@ class CreateRequestsTable extends Migration
             $table->string('message');
             $table->integer('user_id');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
 
        Schema::create('request_details', function (Blueprint $table) {
@@ -28,6 +29,7 @@ class CreateRequestsTable extends Migration
             $table->integer('quantity');
             $table->string('unit_type');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 

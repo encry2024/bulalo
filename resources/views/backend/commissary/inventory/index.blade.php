@@ -52,11 +52,11 @@
                 serverSide: true,
                 ajax: '{!! route('admin.commissary.inventory.get') !!}',
                 columns: [
+                    { data: 14 },
                     { data: 13 },
-                    { data: 12 },
                     { data: 3  },
-                    { data: 10 },
-                    { data: 11 } 
+                    { data: 11 },
+                    { data: 12 } 
                 ],
                 order: [1, 'asc']
             });

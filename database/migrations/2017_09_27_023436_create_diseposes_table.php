@@ -24,6 +24,7 @@ class CreateDiseposesTable extends Migration
             $table->string('witness');
             $table->string('type');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
 
         Schema::create('drygood_disposes', function (Blueprint $table) {
@@ -36,6 +37,7 @@ class CreateDiseposesTable extends Migration
             $table->string('reason');
             $table->string('witness');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 

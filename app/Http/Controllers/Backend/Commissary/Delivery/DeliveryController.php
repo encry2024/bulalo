@@ -93,4 +93,10 @@ class DeliveryController extends Controller
 
 		return redirect()->back()->withFlashDanger('Request quantity doesn\'t match from stock');
 	}
+
+	public function destroy(Delivery $delivery){
+    	$delivery->delete();
+
+    	return redirect()->route('admin.commissary.delivery.index')->withFlashDanger('Delivery record deleted Successfully!');
+    }
 }

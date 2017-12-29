@@ -4,6 +4,7 @@ namespace App\Models\ProductSize;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ProductSize\Traits\Relationship\ProductSizeRelationship;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProductSize extends Model
 {

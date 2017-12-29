@@ -22,6 +22,7 @@ class CreateStocksTable extends Migration
             $table->string('status')->default('NEW');
             $table->integer('inventory_id')->unsigned();
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 

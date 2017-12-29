@@ -20,6 +20,7 @@ class CreateProductsTable extends Migration
             $table->string('category');
             $table->string('image')->default('')->nullable();
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 

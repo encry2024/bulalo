@@ -53,12 +53,12 @@
                 serverSide: true,
                 ajax: '{!! route('admin.inventory.get') !!}',
                 columns: [
-                    { data: 9 },
                     { data: 10 },
+                    { data: 11 },
                     { data: 3 },
-                    { data: 8 },
+                    { data: 9 },
                     { data: 5 },
-                    { data: 11 }
+                    { data: 12 }
                 ],
                 order: [1, 'asc']
             });

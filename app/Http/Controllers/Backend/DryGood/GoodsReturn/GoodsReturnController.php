@@ -44,7 +44,7 @@ class GoodsReturnController extends Controller
     }
 
     public function destroy(GoodsReturn $goods_return){
-        $inventory = Inventory::findOrFail($goods->inventory_id);
+        $inventory = Inventory::findOrFail($goods_return->inventory_id);
         $inventory->stock = $inventory->stock + $goods_return->quantity;
         $inventory->save();
 

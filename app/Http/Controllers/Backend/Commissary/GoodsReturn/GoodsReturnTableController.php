@@ -23,9 +23,14 @@ class GoodsReturnTableController extends Controller
 		return Datatables::of($this->goods_returns->getForDataTable())
 			->escapeColumns('id', 'sort')
 			->addColumn('name', function($goods_returns) {
-				$com = Inventory::findOrFail($goods_returns->inventory_id);	
+				$inventory = $goods_returns->inventory;
 
-				return $com->name;
+				if($inventory->supplier == 'Other')
+				{
+					return $inventory->other_inventory->name;
+				}
+
+				return $inventory->drygood_inventory->name;
 			})
 			->addColumn('actions', function($goods_returns) {
 				return $goods_returns->action_buttons;

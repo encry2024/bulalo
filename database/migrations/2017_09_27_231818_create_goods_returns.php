@@ -23,6 +23,7 @@ class CreateGoodsReturns extends Migration
             $table->string('reason');
             $table->string('witness');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
 
         Schema::create('drygoods_returns', function (Blueprint $table) {
@@ -35,6 +36,7 @@ class CreateGoodsReturns extends Migration
             $table->string('reason');
             $table->string('witness');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 

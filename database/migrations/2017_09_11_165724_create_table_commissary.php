@@ -23,12 +23,14 @@ class CreateTableCommissary extends Migration
             $table->string('supplier');
             $table->integer('category_id')->unsigned();
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
 
         Schema::create('commissary_other_inventories', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
 
         Schema::create('commissary_products', function (Blueprint $table) {
@@ -39,6 +41,7 @@ class CreateTableCommissary extends Migration
             $table->decimal('cost', 10, 2)->default(0);
             $table->integer('category_id')->unsinged();
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
 
         Schema::create('commissary_inventory_product', function (Blueprint $table) {
@@ -48,6 +51,7 @@ class CreateTableCommissary extends Migration
             $table->integer('quantity');
             $table->string('unit_type');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
             $table->foreign('product_id')->references('id')->on('commissary_products')->onDelete('cascade');
             $table->foreign('inventory_id')->references('id')->on('commissary_inventories')->onDelete('cascade');
         });
@@ -61,6 +65,7 @@ class CreateTableCommissary extends Migration
             $table->string('status')->default('NEW');
             $table->integer('inventory_id')->unsigned();
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
 
         Schema::create('commissary_produce', function (Blueprint $table) {
@@ -69,6 +74,7 @@ class CreateTableCommissary extends Migration
             $table->integer('quantity');
             $table->date('date');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
 
         Schema::create('commissary_history', function (Blueprint $table) {
@@ -77,6 +83,7 @@ class CreateTableCommissary extends Migration
             $table->string('description');
             $table->string('status');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
 
     }

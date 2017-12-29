@@ -19,6 +19,7 @@ class CreateTableBranch extends Migration
             $table->integer('discount');
             $table->string('description');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 

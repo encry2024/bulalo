@@ -4,6 +4,7 @@ namespace App\Models\RequestDetail;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\RequestDetail\Traits\Relationship\RequestDetailRelationship;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RequestDetail extends Model
 {

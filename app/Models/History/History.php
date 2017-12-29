@@ -4,6 +4,7 @@ namespace App\Models\History;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\History\Traits\Relationship\HistoryRelationship;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class History

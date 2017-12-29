@@ -21,6 +21,7 @@ class CreateOrderListsTable extends Migration
             $table->integer('quantity')->unsigned();
             $table->integer('product_size_id');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 

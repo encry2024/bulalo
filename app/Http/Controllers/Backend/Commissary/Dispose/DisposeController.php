@@ -18,7 +18,6 @@ class DisposeController extends Controller
     public function create(){
         $ingredients = Inventory::all();
         $products    = Product::orderBy('name')->get()->pluck('name', 'id'); 
-        $branches    = Branch::orderBy('name')->get()->pluck('name', 'id');
         $inventories = [];
 
         for($i = 0; $i < count($ingredients); $i++)
@@ -39,7 +38,7 @@ class DisposeController extends Controller
             }
         }
 
-    	return view('backend.commissary.dispose.create', compact('inventories', 'products', 'branches'));
+    	return view('backend.commissary.dispose.create', compact('inventories', 'products'));
     }
 
     public function store(Request $request){

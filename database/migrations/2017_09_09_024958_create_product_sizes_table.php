@@ -21,6 +21,7 @@ class CreateProductSizesTable extends Migration
             $table->string('size');
             $table->timestamps();
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->timestamp('deleted_at')->nullable();
         });
 
         Schema::create('inventory_product_size', function (Blueprint $table) {
@@ -31,7 +32,7 @@ class CreateProductSizesTable extends Migration
             $table->string('unit_type');
             $table->foreign('inventory_id')->references('id')->on('inventories')->onDelete('cascade');
             $table->foreign('product_size_id')->references('id')->on('product_sizes')->onDelete('cascade');
-
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 

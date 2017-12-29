@@ -20,6 +20,7 @@ class CreateNotificationsTable extends Migration
             $table->string('status');
             $table->integer('inventory_id');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 

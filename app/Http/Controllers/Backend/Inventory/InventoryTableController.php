@@ -45,7 +45,16 @@ class InventoryTableController extends Controller
                     }
                     elseif($inventory->supplier == 'Commissary Raw Material')
                     {
-                        $name = $inventory->commissary_inventory->name;
+                        $com = $inventory->commissary_inventory;
+
+                        if($com->supplier == 'Other')
+                        {
+                            $name = $com->other_inventory->name;
+                        }
+                        else
+                        {
+                            $name = $com->drygood_inventory->name;
+                        }
                     }
                     elseif($inventory->supplier == 'DryGoods Material')
                     {

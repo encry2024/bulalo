@@ -22,6 +22,7 @@ class CreateDrygoodsTable extends Migration
             $table->string('physical_quantity');
             $table->integer('category_id')->unsigned();
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
 
         Schema::create('drygood_products', function (Blueprint $table) {
@@ -32,6 +33,7 @@ class CreateDrygoodsTable extends Migration
             $table->decimal('cost', 10, 2)->default(0);
             $table->integer('category_id')->unsinged();
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
 
         Schema::create('drygood_inventory_product', function (Blueprint $table) {
@@ -40,6 +42,7 @@ class CreateDrygoodsTable extends Migration
             $table->integer('product_id')->unsigned();
             $table->integer('quantity');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
             $table->foreign('product_id')->references('id')->on('drygood_products')->onDelete('cascade');
             $table->foreign('inventory_id')->references('id')->on('drygood_inventories')->onDelete('cascade');
         });
@@ -53,6 +56,7 @@ class CreateDrygoodsTable extends Migration
             $table->string('status')->default('NEW');
             $table->integer('inventory_id')->unsigned();
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
 
         Schema::create('drygood_produce', function (Blueprint $table) {
@@ -61,6 +65,7 @@ class CreateDrygoodsTable extends Migration
             $table->integer('quantity');
             $table->date('date');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
 
         Schema::create('drygood_history', function (Blueprint $table) {
@@ -69,6 +74,7 @@ class CreateDrygoodsTable extends Migration
             $table->string('description');
             $table->string('status');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 

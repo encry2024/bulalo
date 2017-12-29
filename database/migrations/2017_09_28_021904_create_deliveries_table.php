@@ -22,6 +22,7 @@ class CreateDeliveriesTable extends Migration
             $table->string('status')->default('NOT RECEIVED');
             $table->date('date');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
 
         Schema::create('drygood_deliveries', function (Blueprint $table) {
@@ -33,6 +34,7 @@ class CreateDeliveriesTable extends Migration
             $table->string('deliver_to');
             $table->date('date');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 

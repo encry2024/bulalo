@@ -18,6 +18,7 @@ class CreateAuditTrailTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->string('description');
             $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 
