@@ -13,6 +13,12 @@ class DeliveryRepository extends BaseRepository
 
 	public function getForDataTable(){
 		return $this->query()
+				->with(['inventory' => function($q) {
+					$q->withTrashed();
+				}])
+				->with(['product' => function($q) {
+					$q->withTrashed();
+				}])
 				->select('id', 'quantity', 'price', 'date', 'item_id', 'status', 'type');
 	}
 }

@@ -18,6 +18,12 @@ class ProductController extends Controller
     }
 
     public function show(Product $product){
+        $product = Product::with(['ingredients' => function($q) {
+                    $q->withTrashed();
+                }])
+                ->where('id', $product->id)
+                ->firstOrFail();
+
         return view('backend.commissary.product.show', compact('product'));
     }
 

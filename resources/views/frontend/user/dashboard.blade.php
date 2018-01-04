@@ -243,7 +243,6 @@
                 type: 'get',
                 url : '{{ url("dashboard") }}/' + id + '/product',
                 success: function(data){
-                    console.log(data);
                     var hasNoStock  = 0;
                     var product     = data['product'];
                     var prod_sizes  = data['product_size'];
@@ -320,7 +319,7 @@
                     });
                 },
                 error: function(data){
-                    console.log('error');
+                    // console.log('error');
                 }
             });
         }        
@@ -518,54 +517,61 @@
                         discount: discount
                     },
                     success: function(data){
-                        console.log(data);
-                        if(data[0] == 'success')
+                        if(typeof(data) == 'object')
                         {
-                            var list = '';
-                            flag = true;
-                            $('#notify').text('')
-                            $('#items tbody').find('tr').remove();
-
-                            for(var i = 0; i < order_list.length; i++)
+                            if(data[0] == 'success')
                             {
-                                var code = order_list[i]['code'];
-                                var qty  = order_list[i]['qty'];
-                                var price= order_list[i]['price'];
-                                var size = order_list[i]['size'];
-                                list     += '<tr>';
+                                var list = '';
+                                flag = true;
+                                $('#notify').text('')
+                                $('#items tbody').find('tr').remove();
 
-                                if(qty > 1)
+                                for(var i = 0; i < order_list.length; i++)
                                 {
-                                    list += '<td>' + qty + '</td>';
-                                    list += '<td>' + code + ' ' + (size == 'Small' ? '': size) + ' @ ' + (price / qty) + '</td>';
-                                }
-                                else
-                                {
-                                    list += '<td>' + qty + '</td>';
-                                    list += '<td>' + code + ' ' + (size == 'Small' ? '': size) + '</td>';
+                                    var code = order_list[i]['code'];
+                                    var qty  = order_list[i]['qty'];
+                                    var price= order_list[i]['price'];
+                                    var size = order_list[i]['size'];
+                                    list     += '<tr>';
+
+                                    if(qty > 1)
+                                    {
+                                        list += '<td>' + qty + '</td>';
+                                        list += '<td>' + code + ' ' + (size == 'Small' ? '': size) + ' @ ' + (price / qty) + '</td>';
+                                    }
+                                    else
+                                    {
+                                        list += '<td>' + qty + '</td>';
+                                        list += '<td>' + code + ' ' + (size == 'Small' ? '': size) + '</td>';
+                                    }
+
+                                    list += '<td>' + price + '</td>';
+                                    list += '</tr>';
                                 }
 
-                                list += '<td>' + price + '</td>';
-                                list += '</tr>';
+
+                                $('#transaction_no').text('#' + data[1]);
+                                $('#print_total').text(parseFloat(payable).toFixed(2));
+                                $('#print_cash').text(parseFloat(cash).toFixed(2));
+                                $('#print_change').text(parseFloat(change).toFixed(2));
+                                $('#print_discount').text(parseFloat(discount));
+                                $('#items tbody').append(list);
+                                $('#payment').hide();
+                                $('#official_receipt').show();
+                                $('#btn_print').css('visibility', 'visible');
+                                window.print();
                             }
-
-
-                            $('#transaction_no').text('#' + data[1]);
-                            $('#print_total').text(parseFloat(payable).toFixed(2));
-                            $('#print_cash').text(parseFloat(cash).toFixed(2));
-                            $('#print_change').text(parseFloat(change).toFixed(2));
-                            $('#print_discount').text(parseFloat(discount));
-                            $('#items tbody').append(list);
-                            $('#payment').hide();
-                            $('#official_receipt').show();
-                            $('#btn_print').css('visibility', 'visible');
-                            window.print();
+                            else
+                            {
+                                swal('Order not save!','', 'error');
+                                $('#btn_print').css('visibility', 'hidden');
+                            }
                         }
                         else
                         {
-                            swal('Order not save!','', 'error');
-                            $('#btn_print').css('visibility', 'hidden');
+                            swal('Not Enought Stock','', 'error');
                         }
+
                         $('#btn_submit').removeAttr('readonly');
                     },
                     error: function(data){

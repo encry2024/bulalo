@@ -33,7 +33,7 @@ class DeliveryTableController extends Controller
 			->addColumn('actions', function($deliveries) {
 				return $deliveries->action_buttons;
 			})
-			->make();
+			->make(true);
 	}
 
 }

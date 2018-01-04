@@ -64,7 +64,10 @@ class ReportControllers extends Controller
 
         foreach (Category::all() as $category) 
         {
-            $inventories = Inventory::where('category_id', $category->id)->where('supplier', 'Commissary Raw Material')->get();
+            $inventories = Inventory::where('category_id', $category->id)
+                            ->where('supplier', 'Commissary Raw Material')
+                            ->withTrashed()
+                            ->get();
 
             $index       = 0;
             $objects     = [];
@@ -124,13 +127,13 @@ class ReportControllers extends Controller
                                     'order_list.product.product_size.ingredients' => 
                                         function($q) use ($inventory_id) 
                                         {
-                                            $q->where('inventory_product_size.inventory_id', $inventory_id);
+                                            $q->where('inventory_product_size.inventory_id', $inventory_id)->withTrashed();
                                         }
                                 ])
                             ->whereHas('order_list.product.product_size.ingredients', 
                                     function($q) use($inventory_id) 
                                     {
-                                        $q->where('inventory_product_size.inventory_id', $inventory_id);
+                                        $q->where('inventory_product_size.inventory_id', $inventory_id)->withTrashed();
                                     })
                             ->whereRaw('date(created_at) = "'.$days[$i].'"')
                             ->get();

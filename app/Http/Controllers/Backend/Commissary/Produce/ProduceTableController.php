@@ -21,7 +21,12 @@ class ProduceTableController extends Controller
     	return Datatables::of($this->produces->getForDataTable())
     		->escapeColumns('id', 'sort')
             ->addColumn('products', function($produce) {
-                $produce = Produce::findOrFail($produce->id);
+                $produce = Produce::with(['product' => function($q) {
+                                $q->withTrashed();
+                            }])
+                            ->where('id', $produce->id)
+                            ->firstOrFail();
+
                 return $produce->product->name;
             })
     		->addColumn('actions', function($product) {

@@ -53,14 +53,14 @@
                 serverSide: true,
                 ajax: '{!! route('admin.dry_good.goods_return.get') !!}',
                 columns: [
-                    { data: 11 },
-                    { data: 2 },
-                    { data: 3 },
-                    { data: 4 },
-                    { data: 5 },
-                    { data: 6 },
-                    { data: 7 },
-                    { data: 12 }
+                    { data: 'name' },
+                    { data: 'date' },
+                    { data: 'quantity' },
+                    { data: 'cost' },
+                    { data: 'total_cost' },
+                    { data: 'reason' },
+                    { data: 'witness' },
+                    { data: 'actions' }
                 ],
                 order: [1, 'asc']
             });

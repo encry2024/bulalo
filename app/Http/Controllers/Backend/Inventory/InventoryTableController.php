@@ -72,7 +72,7 @@ class InventoryTableController extends Controller
                     $unit  = $inventory->unit_type;
 
                     if($stock > 1){
-                        $unit = $unit.'s';
+                        $unit = $unit;
                     }
 
                     return $stock.' '.$unit;

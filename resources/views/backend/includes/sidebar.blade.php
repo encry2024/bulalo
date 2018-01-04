@@ -60,6 +60,12 @@
                             <span>Stock In</span>
                         </a>
                     </li>
+                    <li class="{{ active_class(Active::checkUriPattern('admin/pos/cost')) }}">
+                        <a href="{{ route('admin.cost.index') }}">
+                            <i class="fa fa-circle-o"></i>
+                            <span>Cost</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
             @endauth

@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Backend\Commissary\OrderForm;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Inventory\Inventory;
-use App\Models\Stock\Stock;
+use App\Models\Commissary\Inventory\Inventory;
+use App\Models\Commissary\Stock\Stock;
 use App\Models\Category\Category;
 
 class OrderFormController extends Controller
@@ -48,11 +48,12 @@ class OrderFormController extends Controller
 		foreach($categories as $category)
 		{
 			$objects = [];
-			$inventories = Inventory::where('category_id', $category->id)->get();
+			$inventories = Inventory::where('category_id', $category->id)->withTrashed()->get();
 
 			foreach($inventories as $inventory)
 			{	
 				$quantities   = [];
+				$name 		  = '';
 
 				for($i = 0; $i < 5; $i++) {
 					$stock = Stock::selectRaw('sum(quantity) as quantity')
@@ -63,8 +64,13 @@ class OrderFormController extends Controller
 					$quantities[$i] = count($stock->quantity) ? $stock->quantity : 0;
 				}
 
+				if($inventory->supplier == 'Other')
+					$name = $inventory->other_inventory->name;
+				else
+					$name = $inventory->drygood_inventory->name;
+
 				$objects[$index] = 	[
-										'name'		 => $inventory->name,
+										'name'		 => $name,
 										'critical' 	 => $inventory->reorder_level,
 										'unit_type'  => $inventory->unit_type,
 										'quantities' => $quantities

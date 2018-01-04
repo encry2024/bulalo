@@ -50,7 +50,7 @@ class StockTableController extends Controller
         	->addColumn('actions', function($stock) {
         		return $stock->action_buttons;
         	})
-            ->make();
+            ->make(true);
     }
 
 }

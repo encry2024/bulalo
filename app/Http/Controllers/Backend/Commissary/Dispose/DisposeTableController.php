@@ -28,7 +28,7 @@ class DisposeTableController extends Controller
 			->addColumn('actions', function($dispose) {
 				return $dispose->action_buttons;
 			})
-			->make();
+			->make(true);
 	}
 
 }

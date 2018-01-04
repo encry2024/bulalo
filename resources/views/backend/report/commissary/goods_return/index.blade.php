@@ -66,7 +66,22 @@
                         @foreach($disposals as $disposal)
                             <tr>
                                 <td>{{ $disposal->date }}</td>
-                                <td>{{ $disposal->inventory->name }}</td>
+                                <td>
+                                    <?php
+                                        $name = '';
+
+                                        if($disposal->inventory->supplier == 'Other')
+                                        {
+                                            $name = $disposal->inventory->other_inventory->name;
+                                        }
+                                        else
+                                        {
+                                            $name = $disposal->inventory->drygood_inventory->name;
+                                        }
+
+                                        echo $name;
+                                    ?>
+                                </td>
                                 <td>{{ $disposal->quantity }}</td>
                                 <td>{{ $disposal->cost }}</td>
                                 <td>{{ $disposal->total_cost }}</td>

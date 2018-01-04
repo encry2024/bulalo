@@ -35,6 +35,7 @@ class InvoiceController extends Controller
 						{
 							$q->selectRaw('sum(quantity) as quantity, inventory_id')
 								->where('received', $date)
+								->withTrashed()
 								->groupBy('inventory_id');
 						}
 					])
@@ -42,6 +43,7 @@ class InvoiceController extends Controller
 						{
 							$q->selectRaw('sum(quantity) as quantity, inventory_id')
 								->where('received', $date)
+								->withTrashed()
 								->groupBy('inventory_id');
 						})
 					->get();

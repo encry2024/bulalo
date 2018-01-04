@@ -44,7 +44,7 @@ class DeliveryTableController extends Controller
 			->addColumn('quantity', function($deliveries) {
 				return $deliveries->quantity.' '.$deliveries->inventory->unit_type;
 			})
-			->make();
+			->make(true);
 	}
 
 }

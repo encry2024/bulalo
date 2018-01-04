@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Backend\DryGood\OrderForm;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Inventory\Inventory;
-use App\Models\Stock\Stock;
+use App\Models\DryGood\Inventory\Inventory;
+use App\Models\DryGood\Stock\Stock;
 use App\Models\Category\Category;
 
 class OrderFormController extends Controller
@@ -48,7 +48,7 @@ class OrderFormController extends Controller
 		foreach($categories as $category)
 		{
 			$objects = [];
-			$inventories = Inventory::where('category_id', $category->id)->get();
+			$inventories = Inventory::where('category_id', $category->id)->withTrashed()->get();
 
 			foreach($inventories as $inventory)
 			{	
@@ -58,6 +58,7 @@ class OrderFormController extends Controller
 					$stock = Stock::selectRaw('sum(quantity) as quantity')
 						->where('received', $date_ranges[$i])
 						->where('inventory_id', $inventory->id)
+						->withTrashed()
 						->first();
 
 					$quantities[$i] = count($stock->quantity) ? $stock->quantity : 0;

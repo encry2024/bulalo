@@ -46,11 +46,15 @@
 
                     <div class="col-lg-4">
                         {{ Form::select('category', [
-                                'FOOD' => 'FOOD',
-                                'JUICE' => 'JUICE',
-                                'LYCHEE JUICE' => 'LYCHEE JUICE',
-                                'SHAKES' => 'SHAKES',
-                                'DESSERT' => 'DESSERT'
+                                'SOUP'              => 'SOUP', 
+                                'GRILL'             => 'GRILL', 
+                                'FRY'               => 'FRY', 
+                                'PINOY SPECIALTIES' => 'PINOY SPECIALTIES', 
+                                'MERIENDA CLASSIC'  => 'MERIENDA CLASSIC',
+                                'BREAKFAST'         => 'BREAKFAST', 
+                                'VEGETABLES'        => 'VEGETABLES', 
+                                'PULUTAN'           => 'PULUTAN', 
+                                'DRINK'             => 'DRINK'
                             ] , $product->category, ['class' => 'form-control', 'maxlength' => '191', 'required' => 'required']) }}
                     </div><!--col-lg-10-->
 
@@ -67,9 +71,13 @@
                     <div class="col-lg-4">
                         {{ Form::select('product_size', 
                             [
-                                'Small'  => 'Small',
-                                'Medium' => 'Medium',
-                                'Large'  => 'Large'
+                                'Short Order'   => 'Short Order',
+                                'Small'         => 'Small',
+                                'Medium'        => 'Medium',
+                                'Large'         => 'Large',
+                                'Bilao(5pax)'   => 'Bilao(5pax)',
+                                'Bilao(10pax)'  => 'Bilao(10pax)',
+                                'Bilao(15pax)'  => 'Bilao(15pax)',
                             ], old('product_size'), 
                             [
                                 'class' => 'form-control select2', 

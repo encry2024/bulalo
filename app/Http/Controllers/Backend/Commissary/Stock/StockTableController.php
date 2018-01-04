@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Yajra\Datatables\Facades\Datatables;
 use App\Repositories\Backend\Commissary\Stock\StockRepository;
 use App\Models\Commissary\Stock\Stock;
+use App\Models\Commissary\Inventory\Inventory;
 use Illuminate\Http\Request;
 
 /**
@@ -23,7 +24,7 @@ class StockTableController extends Controller
     public function __invoke(Request $request){
         return Datatables::of($this->stocks->getForDataTable())
 	        ->escapeColumns(['id', 'sort'])
-            ->addColumn('inventories', function($stock) {
+            ->addColumn('name', function($stock) {
                 $name = '';
 
                 if($stock->inventory->supplier == 'Other')
@@ -40,7 +41,7 @@ class StockTableController extends Controller
         	->addColumn('actions', function($stock) {
         		return $stock->action_buttons;
         	})
-            ->make();
+            ->make(true);
     }
 
 }

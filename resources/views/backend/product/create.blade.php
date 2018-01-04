@@ -46,11 +46,15 @@
 
                     <div class="col-lg-4">
                         {{ Form::select('category', [
-                                'FOOD' => 'FOOD',
-                                'JUICE' => 'JUICE',
-                                'LYCHEE JUICE' => 'LYCHEE JUICE',
-                                'SHAKES' => 'SHAKES',
-                                'DESSERT' => 'DESSERT'
+                                'SOUP'              => 'SOUP', 
+                                'GRILL'             => 'GRILL', 
+                                'FRY'               => 'FRY', 
+                                'PINOY SPECIALTIES' => 'PINOY SPECIALTIES', 
+                                'MERIENDA CLASSIC'  => 'MERIENDA CLASSIC',
+                                'BREAKFAST'         => 'BREAKFAST', 
+                                'VEGETABLES'        => 'VEGETABLES', 
+                                'PULUTAN'           => 'PULUTAN', 
+                                'DRINK'             => 'DRINK'
                             ] ,old('category'), ['class' => 'form-control', 'maxlength' => '191', 'required' => 'required']) }}
                     </div><!--col-lg-10-->
 
@@ -67,9 +71,13 @@
                     <div class="col-lg-4">
                         {{ Form::select('product_size', 
                             [
-                                'Small'  => 'Small',
-                                'Medium' => 'Medium',
-                                'Large'  => 'Large'
+                                'Short Order'   => 'Short Order',
+                                'Small'         => 'Small',
+                                'Medium'        => 'Medium',
+                                'Large'         => 'Large',
+                                'Bilao(5pax)'   => 'Bilao(5pax)',
+                                'Bilao(10pax)'  => 'Bilao(10pax)',
+                                'Bilao(15pax)'  => 'Bilao(15pax)',
                             ], old('product_size'), 
                             [
                                 'class' => 'form-control select2', 
@@ -138,7 +146,7 @@
                 options += '<option value="lbs">Pound</option>';
                 options += '<option value="oz">Ounce</option>';
             }
-            else
+            else if(val == 'Volume')
             {
                 options += '<option value="ml">Milliliter</option>';
                 options += '<option value="cl">Centiliter</option>';
@@ -148,6 +156,12 @@
                 options += '<option value="tsp">Tea Spoon</option>';
                 options += '<option value="tbsp">Table Spoon</option>';
                 options += '<option value="gal">Gallon</option>';
+            }
+            else
+            {
+                options += '<option value="pc">Piece</option>';
+                options += '<option value="bottle">Bottle</option>';
+                options += '<option value="can">Can</option>';
             }
 
             return options;
@@ -159,6 +173,7 @@
                 type: 'GET',
                 url: "{!! URL::to('admin/pos/product/unit_type') !!}/" + id,
                 success: function(data){
+                    console.log(data);
                     var table   = $('table[data-id="' + size + '"]');
                     var product = $(table).closest('.panel_product');
                     var select  = $(product).find('#physical_quantity'); 
@@ -237,7 +252,7 @@
                     //form header
                     html += '<h4 class="col-lg-10 col-lg-offset-1"><small>Product Size:</small> ' + size + '</h4>';
                     html += '<div class="col-lg-1">';
-                    html += '<a href="#" class="btn btn-xs btn-danger pull-right" onclick="removeTable(this)"><i class="fa fa-times"></i></a>';
+                    html += '<button type="button" class="btn btn-xs btn-danger pull-right" onclick="removeTable(this)"><i class="fa fa-times"></i></button>';
                     html += '</div>';
 
                     //form price field

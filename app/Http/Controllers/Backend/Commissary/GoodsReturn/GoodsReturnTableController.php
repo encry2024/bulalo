@@ -35,7 +35,7 @@ class GoodsReturnTableController extends Controller
 			->addColumn('actions', function($goods_returns) {
 				return $goods_returns->action_buttons;
 			})
-			->make();
+			->make(true);
 	}
 
 }

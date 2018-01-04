@@ -12,6 +12,9 @@ class DisposeRepository extends BaseRepository
 	const MODEL = Dispose::class;
 
 	public function getForDataTable(){
-		return $this->query();
+		return $this->query()
+				->with(['inventory' => function($q) {
+					$q->withTrashed();
+				}]);
 	}
 }

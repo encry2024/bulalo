@@ -13,6 +13,9 @@ class StockRepository extends BaseRepository
 
 	public function getForDataTable(){
 		return $this->query()
+				->with(['inventory' => function($q) {
+					$q->withTrashed();
+				}])
 				->select('id', 'quantity', 'price', 'received', 'expiration', 'status', 'inventory_id');
 	}
 }

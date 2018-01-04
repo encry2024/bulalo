@@ -25,6 +25,7 @@ class ReportController extends Controller
 		{
 			$arr = [];
 			$inventories = Inventory::where('category_id', $category->id)
+							->withTrashed()
 							->get();
 
 			foreach ($inventories as $inventory) 
@@ -64,6 +65,7 @@ class ReportController extends Controller
 		{
 			$arr = [];
 			$inventories = Inventory::where('category_id', $category->id)
+							->withTrashed()
 							->get();
 
 
@@ -127,22 +129,23 @@ class ReportController extends Controller
 
 				$stock   = Stock::where('inventory_id', $inventory_id)
 						 ->where(DB::raw('date(created_at)'), $day)
+						 ->withTrashed()
 						 ->first();
 
 				$price   = count($stock) ? $stock->price : 0;
 
 				$products   = Product::with([
 							'produced' => function($q) use($day) {
-								$q->where('date', $day);
+								$q->where('date', $day)->withTrashed();
 							}, 
 							'ingredients' => function($q) use($inventory_id) {
-								$q->where('commissary_inventory_product.inventory_id', $inventory_id);
+								$q->where('commissary_inventory_product.inventory_id', $inventory_id)->withTrashed();
 							}])
 							->whereHas('ingredients', function($q) use($inventory_id) {
-								$q->where('commissary_inventory_product.inventory_id', $inventory_id);
+								$q->where('commissary_inventory_product.inventory_id', $inventory_id)->withTrashed();
 							})
 							->whereHas('produced', function($q) use($day) {
-								$q->where('date', $day);
+								$q->where('date', $day)->withTrashed();
 							})->get();
 
 				if(count($products))

@@ -25,7 +25,7 @@ class ReportController extends Controller
     	$from 	  = date('Y-m-d', strtotime($to.' -6 day'));
     	$reports  = $this->fetch_inventories($from, $to);
         $products = $this->fetch_products($from, $to);
-
+        
     	return view('backend.report.commissary.summary.index', compact('reports', 'products', 'from', 'to'));
     }
 
@@ -46,7 +46,7 @@ class ReportController extends Controller
         {
             $index       = 0;
             $report      = [];
-            $inventories = Inventory::where('category_id', $category->id)->get();
+            $inventories = Inventory::where('category_id', $category->id)->withTrashed()->get();
 
             foreach ($inventories as $inventory) 
             {
@@ -77,7 +77,7 @@ class ReportController extends Controller
         $index    = 0;
         $reports  = [];
         $category = Category::where('name', 'food')->first();
-        $products = Product::where('category_id', $category->id)->get();
+        $products = Product::where('category_id', $category->id)->withTrashed()->get();
 
         foreach($products as $product)
         {
@@ -105,18 +105,21 @@ class ReportController extends Controller
         $used_qty = 0;
     	$sales    = $this->sales($inventory_id, $from, $to)->quantity;
     	$inventory= Inventory::with(['stocks' => function($q) use($from, $to) {
-                        $q->whereBetween('received', [$from, $to]);
+                        $q->whereBetween('received', [$from, $to])->withTrashed();
                     }, 'products'])
-                    ->where('id', $inventory_id)->first();
+                    ->where('id', $inventory_id)
+                    ->withTrashed()
+                    ->first();
 
         $deliveries = Delivery::where('item_id', $inventory->id)
                     ->where('type', 'RAW MATERIAL')
+                    ->withTrashed()
                     ->get();
 
         $product = Product::with(['ingredients' => function($q) use($inventory_id) {
-                        $q->where('commissary_inventory_product.inventory_id', $inventory_id);
+                        $q->where('commissary_inventory_product.inventory_id', $inventory_id)->withTrashed();
                     }, 'produced' => function($q) use($from, $to) {
-                        $q->whereBetween('date', [$from, $to]);
+                        $q->whereBetween('date', [$from, $to])->withTrashed();
                     }])->first();
 
 
@@ -169,6 +172,7 @@ class ReportController extends Controller
         $deliveries = Delivery::where('item_id', $inventory_id)
                     ->whereBetween('date', [$from, $to])
                     ->where('type', 'RAW MATERIAL')
+                    ->withTrashed()
                     ->get();
 
         foreach($deliveries as $delivery)
@@ -193,9 +197,9 @@ class ReportController extends Controller
     	$cost     = 0;
     	$total_qty= 0;
 
-        $inv = Inventory::findOrFail($inventory_id);
+        $inv = Inventory::where('id', $inventory_id)->withTrashed()->first();
 
-        $pos = POS::where('inventory_id', $inv->id)->where('supplier', 'Commissary Raw Material')->first();
+        $pos = POS::where('inventory_id', $inv->id)->where('supplier', 'Commissary Raw Material')->withTrashed()->first();
 
         if(count($pos))
         {
@@ -205,15 +209,16 @@ class ReportController extends Controller
                                 'order_list.product.product_size.ingredients' => 
                                     function($q) use ($pos) 
                                     {
-                                        $q->where('inventory_product_size.inventory_id', $pos->id);
+                                        $q->where('inventory_product_size.inventory_id', $pos->id)->withTrashed();
                                     }
                             ])
                         ->whereHas('order_list.product.product_size.ingredients', 
                                     function($q) use($pos) 
                                     {
-                                        $q->where('inventory_product_size.inventory_id', $pos->id);
+                                        $q->where('inventory_product_size.inventory_id', $pos->id)->withTrashed();
                                     })
                         ->whereBetween(DB::raw('date(created_at)'), [$from, $to])
+                        ->withTrashed()
                         ->get();
 
             foreach ($orders as $order) 
@@ -285,6 +290,7 @@ class ReportController extends Controller
     	$disposes = Dispose::where('inventory_id', $inventory_id)
     					->whereBetween('date', [$from, $to])
                         ->where('type', 'Raw Material')
+                        ->withTrashed()
     					->get();
 
     	foreach ($disposes as $dispose) 
@@ -311,6 +317,7 @@ class ReportController extends Controller
     	$cost     = 0;
     	$goods    = GoodsReturn::where('inventory_id', $inventory_id)
     					->whereBetween('date', [$from, $to])
+                        ->withTrashed()
     					->get();
 
     	foreach ($goods as $good) 
@@ -334,9 +341,9 @@ class ReportController extends Controller
     public function actual($inventory_id, $from, $to){
     	$delivery  = $this->delivery($inventory_id, $from, $to);
     	$inventory = Inventory::with(['stocks' => function($q) use($from, $to) {
-                        $q->whereBetween('received', [$from, $to]);
+                        $q->whereBetween('received', [$from, $to])->withTrashed();
                     }])
-                    ->where('id', $inventory_id)->first();
+                    ->where('id', $inventory_id)->withTrashed()->first();
 
     	// return ($inventory->stock + (count($inventory->stocks) ? $inventory->stocks->sum('quantity') : 0));
         return $inventory->stock;
@@ -359,7 +366,7 @@ class ReportController extends Controller
                             [
                                 'produced' => function($q) use($from, $to) 
                                             {
-                                                $q->whereBetween('date', [$from, $to]);
+                                                $q->whereBetween('date', [$from, $to])->withTrashed();
                                             }
                             ])
                             ->where('id', $product_id)->first();
@@ -386,9 +393,10 @@ class ReportController extends Controller
         $deliveries = Delivery::where('item_id', $product_id)
                     ->whereBetween('date', [$from, $to])
                     ->where('type', 'PRODUCT')
+                    ->withTrashed()
                     ->get();
 
-        $product = Product::findOrFail($deliveries->first()->item_id);
+        $product = Product::where('id', $deliveries->first()->item_id)->withTrashed()->first();
 
         foreach($deliveries as $delivery)
         {
@@ -413,9 +421,14 @@ class ReportController extends Controller
         $cost     = 0;
         $total_qty= 0;
 
-        $cproduct = Product::findOrFail($product_id);
+        $cproduct = Product::where('id', $product_id)
+                    ->withTrashed()
+                    ->first();
 
-        $pos = POS::where('inventory_id', $product_id)->where('supplier', 'Commissary Product')->first();
+        $pos = POS::where('inventory_id', $product_id)
+                    ->where('supplier', 'Commissary Product')
+                    ->withTrashed()
+                    ->first();
         
         if(count($pos))
         {
@@ -425,15 +438,18 @@ class ReportController extends Controller
                                 'order_list.product.product_size.ingredients' => 
                                     function($q) use ($pos) 
                                     {
-                                        $q->where('inventory_product_size.inventory_id', $pos->id);
+                                        $q->where('inventory_product_size.inventory_id', $pos->id)
+                                        ->withTrashed();
                                     }
                             ])
                         ->whereHas('order_list.product.product_size.ingredients', 
                                     function($q) use($pos) 
                                     {
-                                        $q->where('inventory_product_size.inventory_id', $pos->id);
+                                        $q->where('inventory_product_size.inventory_id', $pos->id)
+                                        ->withTrashed();
                                     })
                         ->whereBetween(DB::raw('date(created_at)'), [$from, $to])
+                        ->withTrashed()
                         ->get();
 
             foreach ($orders as $order) 
@@ -505,6 +521,7 @@ class ReportController extends Controller
         $disposes = Dispose::where('inventory_id', $product_id)
                         ->whereBetween('date', [$from, $to])
                         ->where('type', 'Product')
+                        ->withTrashed()
                         ->get();
 
         foreach ($disposes as $dispose) 

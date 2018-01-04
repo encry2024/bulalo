@@ -49,69 +49,147 @@ class SaleController extends Controller
     }
 
     public function save(Request $request){
-    	$arr 	= json_decode($request->orders);
+    	$arr 	 = json_decode($request->orders);
+        $p_avail = 0; //available product
 
-    	$order 	= new Order();
-    	$order->transaction_no  = date('y-m').rand(100000, 999999);
-        $order->cash            = $request->cash;
-        $order->change          = $request->change;
-        $order->payable         = $request->payable;
-        $order->discount        = $request->discount;
-        $order->user_id         = Auth::user()->id;
-    	$order->save();
+        for($i = 0; $i < count($arr); $i++)
+        {
+              $status = $this->product_availability($arr[$i]->id, $arr[$i]->qty);
+
+              if($status == 'Available')
+                $p_avail++;
+        }
+
         //
-
-        // set stock use
+        // check if ordered products is equals to available products
         //
-    	for($i = 0; $i < count($arr); $i++){
-            $size = ProductSize::where('size', $arr[$i]->size)->first();
+        if(count($arr) == $p_avail)
+        {
+            $order  = new Order();
+            $order->transaction_no  = date('y-m').rand(100000, 999999);
+            $order->cash            = $request->cash;
+            $order->change          = $request->change;
+            $order->payable         = $request->payable;
+            $order->discount        = $request->discount;
+            $order->user_id         = Auth::user()->id;
+            $order->save();
+            //
 
-    		$list = new OrderList();
-    		$list->order()->associate($order);
-    		$list->product_id         = $arr[$i]->id;
-    		$list->price 		      = $arr[$i]->price;
-    		$list->quantity           = $arr[$i]->qty;
-    		$list->product_size_id    = $size->id;
-    		$list->save();
+            // set stock use
+            //
+            for($i = 0; $i < count($arr); $i++)
+            {
+                $size = ProductSize::where('size', $arr[$i]->size)->first();
 
+                $list = new OrderList();
+                $list->order()->associate($order);
+                $list->product_id         = $arr[$i]->id;
+                $list->price              = $arr[$i]->price;
+                $list->quantity           = $arr[$i]->qty;
+                $list->product_size_id    = $size->id;
+                $list->save();
 
+                $product      = Product::findOrFail($list->product_id);
+                $product_size = $product->product_size;
 
+                foreach ($product_size as $size) {
+                    $inventories = $size->ingredients;
 
-            $product      = Product::findOrFail($list->product_id);
-            $product_size = $product->product_size;
+                    foreach($inventories as $inventory){
+                        $qty_left  = 0;
+                        $stock_dec = 0;
 
-            foreach ($product_size as $size) {
-                $inventories = $size->ingredients;
+                        if($inventory->physical_quantity == 'Mass')
+                        {
+                            $stock_qty = new Mass($inventory->stock, $inventory->unit_type);
 
-                foreach($inventories as $inventory){
-                    $qty_left = 0;
+                            $req_qty   = new Mass(($list->quantity * $inventory->pivot->quantity), $inventory->pivot->unit_type);
 
-                    if($inventory->physical_quantity == 'Mass')
-                    {
-                        $stock_qty = new Mass($inventory->stock, $inventory->unit_type);
+                            $qty_left  = $stock_qty->subtract($req_qty);
 
-                        $req_qty   = new Mass(($list->quantity * $inventory->pivot->quantity), $inventory->pivot->unit_type);
+                            $stock_dec = $qty_left->toUnit($inventory->unit_type);
+                        }
+                        elseif($inventory->physical_quantity == 'Volume')
+                        {
+                            $stock_qty = new Volume($inventory->stock, $inventory->unit_type);
 
-                        $qty_left  = $stock_qty->subtract($req_qty);
+                            $req_qty   = new Volume(($list->quantity * $inventory->pivot->quantity), $inventory->pivot->unit_type);
+
+                            $qty_left  = $stock_qty->subtract($req_qty);
+
+                            $stock_dec = $qty_left->toUnit($inventory->unit_type);
+                        }
+                        else
+                        {
+                            $stock_dec = $list->quantity;
+                        }
+
+                        $inventory->stock = $stock_dec  * $list->quantity;
+                        $inventory->save();
                     }
-                    else
-                    {
-                        $stock_qty = new Volume($inventory->stock, $inventory->unit_type);
+                } 
+            }
 
-                        $req_qty   = new Volume(($list->quantity * $inventory->pivot->quantity), $inventory->pivot->unit_type);
+            return ['success', $order->transaction_no];
+        }
+        else
+        {
+            $this->notification();
+        }
+    	
 
-                        $qty_left  = $stock_qty->subtract($req_qty);
-                    }
+    	return 'failed';
+    }
 
-                    $inventory->stock = $qty_left->toUnit($inventory->unit_type) * $list->quantity;
-                    $inventory->save();
+    public function product_availability($product_id, $quantity){
+        $product      = Product::findOrFail($product_id);
+        $product_size = $product->product_size;
+        $status       = 'Not Available';
+        $available    = 0;
+
+        foreach ($product_size as $size) 
+        {
+            $inventories = $size->ingredients;
+
+            foreach($inventories as $inventory)
+            {
+                $qty_left  = 0;
+                $stock_dec = 0;
+
+                if($inventory->physical_quantity == 'Mass')
+                {
+                    $stock_qty = new Mass($inventory->stock, $inventory->unit_type);
+
+                    $req_qty   = new Mass(($quantity * $inventory->pivot->quantity), $inventory->pivot->unit_type);
+
+                    $qty_left  = $stock_qty->subtract($req_qty);
+
+                    $stock_dec = $qty_left->toUnit($inventory->unit_type);
                 }
-            } 
-    	}
+                elseif($inventory->physical_quantity == 'Volume')
+                {
+                    $stock_qty = new Volume($inventory->stock, $inventory->unit_type);
 
-        $this->notification();
+                    $req_qty   = new Volume(($quantity * $inventory->pivot->quantity), $inventory->pivot->unit_type);
 
-    	return ['success', $order->transaction_no];
+                    $qty_left  = $stock_qty->subtract($req_qty);
+
+                    $stock_dec = $qty_left->toUnit($inventory->unit_type);
+                }
+                else
+                {
+                    $stock_dec = $quantity;
+                }
+
+                if($stock_dec > 0)
+                    $available++;
+            }
+
+            if(count($inventories) == $available)
+                $status = 'Available';
+        }
+
+        return $status;
     }
 
     public function notification(){

@@ -54,7 +54,7 @@ class DashboardController extends Controller
 							$q->whereBetween('created_at', [date('Y-m-01'), date('Y-m-31')])
 						  	  ->orderBy('product_id');
 						}
-					])->get();
+					])->withTrashed()->get();
 
 
 		for($i = 0; $i < count($products); $i++)
@@ -138,8 +138,8 @@ class DashboardController extends Controller
     public function fetchCommissaryProduct(){
         $months     = [];
         $monthNames = [];
-        $commissary = CommissaryProduct::select('id')->get();
-        $inventory  = Inventory::select('id')->whereIn('inventory_id', $commissary)->where('supplier', 'Commissary Product')->get();
+        $commissary = CommissaryProduct::select('id')->withTrashed()->get();
+        $inventory  = Inventory::select('id')->whereIn('inventory_id', $commissary)->where('supplier', 'Commissary Product')->withTrashed()->get();
 
         for($i = 1; $i <= 12; $i++)
         {
@@ -161,11 +161,11 @@ class DashboardController extends Controller
                         [
                             'order_list.product_size',
                             'order_list.product.product_size.ingredients' => function($q) use ($inventory) {
-                                $q->whereIn('inventory_product_size.inventory_id', $inventory);
+                                $q->whereIn('inventory_product_size.inventory_id', $inventory)->withTrashed();
                             }
                         ])
                     ->whereHas('order_list.product.product_size.ingredients', function($q) use($inventory) {
-                        $q->whereIn('inventory_product_size.inventory_id', $inventory);
+                        $q->whereIn('inventory_product_size.inventory_id', $inventory)->withTrashed();
                     })
                     ->whereBetween(DB::raw('date(created_at)'), [$from, $to])
                     ->get();
@@ -211,8 +211,8 @@ class DashboardController extends Controller
     public function fetchCommissaryInventory(){
         $months     = [];
         $monthNames = [];
-        $commissary = Inventory::select('id')->get();
-        $inventory  = Inventory::select('id')->whereIn('inventory_id', $commissary)->where('supplier', 'Commissary Raw Material')->get();
+        $commissary = Inventory::select('id')->withTrashed()->get();
+        $inventory  = Inventory::select('id')->whereIn('inventory_id', $commissary)->where('supplier', 'Commissary Raw Material')->withTrashed()->get();
 
         for($i = 1; $i <= 12; $i++)
         {
@@ -234,11 +234,11 @@ class DashboardController extends Controller
                         [
                             'order_list.product_size',
                             'order_list.product.product_size.ingredients' => function($q) use ($inventory) {
-                                $q->whereIn('inventory_product_size.inventory_id', $inventory);
+                                $q->whereIn('inventory_product_size.inventory_id', $inventory)->withTrashed();
                             }
                         ])
                     ->whereHas('order_list.product.product_size.ingredients', function($q) use($inventory) {
-                        $q->whereIn('inventory_product_size.inventory_id', $inventory);
+                        $q->whereIn('inventory_product_size.inventory_id', $inventory)->withTrashed();
                     })
                     ->whereBetween(DB::raw('date(created_at)'), [$from, $to])
                     ->get();

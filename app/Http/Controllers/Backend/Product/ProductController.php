@@ -20,8 +20,21 @@ class ProductController extends Controller
     }
 
     public function create(){
-    	$ingredients = Inventory::with('commissary_inventory.other_inventory', 'commissary_inventory.drygood_inventory')->get();
         $selections  = [];
+    	$ingredients = Inventory::with(
+                            [
+                                'commissary_inventory.other_inventory' => function($q) 
+                                {
+                                    $q->withTrashed();
+                                }, 
+                                'commissary_inventory.drygood_inventory' => function($q)
+                                {
+                                    $q->withTrashed();
+                                }
+                            ]
+                        )
+                        ->withTrashed()
+                        ->get();        
         
         for($i = 0; $i < count($ingredients); $i++)
         {
@@ -97,7 +110,7 @@ class ProductController extends Controller
 
                     $qty_left  = $stock_qty->subtract($req_qty)->toUnit($ingredient->unit_type);
                 }
-                else
+                elseif($ingredient->physical_quantity == 'Volume')
                 {
                     $stock_qty = new Volume(1, $ingredient->unit_type);
 
@@ -105,8 +118,12 @@ class ProductController extends Controller
 
                     $qty_left  = $stock_qty->subtract($req_qty)->toUnit($ingredient->unit_type);
                 }
+                else
+                {
+                    $qty_left = 1;
+                }
 
-                $cost       = $cost + ($price * ($item->quantity * (1 - $qty_left)));
+                $cost = $cost + ($price * ($item->quantity * (1 / ($qty_left == 0 ? 1 : $qty_left) )));
             }
 
             $prod_size              = new ProductSize();
@@ -128,6 +145,16 @@ class ProductController extends Controller
     }
 
     public function show(Product $product){
+        $product = Product::with(
+                    [
+                        'product_size', 
+                        'product_size.ingredients' => function($q) {
+                            $q->withTrashed();
+                        }
+                    ])
+                    ->where('id', $product->id)
+                    ->first();
+
         return view('backend.product.show', compact('product'));
     }
 
@@ -159,7 +186,10 @@ class ProductController extends Controller
             }
             else
             {
-                $name = $ingredients[$i]->commissary_inventory->name;
+                if($ingredients[$i]->commissary_inventory->supplier == 'Other')
+                    $name = $ingredients[$i]->commissary_inventory->other_inventory->name;
+                else
+                    $name = $ingredients[$i]->commissary_inventory->drygood_inventory->name;
 
                 $selections[$ingredients[$i]->id] = $name;
             }
@@ -299,7 +329,7 @@ class ProductController extends Controller
     }
 
     public function unit_type($id){
-        $inventory = Inventory::findOrFail($id);
+        $inventory = Inventory::where('id', $id)->withTrashed()->first();
         return $inventory->physical_quantity;
     }
 }

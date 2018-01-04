@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Backend\DryGood\Invoice;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Stock\Stock;
+use App\Models\DryGood\Stock\Stock;
 use Carbon\Carbon;
 
 class InvoiceController extends Controller
@@ -29,9 +29,12 @@ class InvoiceController extends Controller
 
 	public function fetchRecord($date) {
 		$stocks = Stock::selectRaw('sum(quantity) as quantity, inventory_id')
-					->with('inventory')
+					->with(['inventory' => function($q) {
+						$q->withTrashed();
+					}])
 					->where('received', $date)
 					->groupBy('inventory_id')
+					->withTrashed()
 					->get();
 
 		return $stocks;

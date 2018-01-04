@@ -12,6 +12,9 @@ class GoodsReturnRepository extends BaseRepository
 	const MODEL = GoodsReturn::class;
 
 	public function getForDataTable(){
-		return $this->query();
+		return $this->query()
+				->with(['inventory' => function($q) {
+					$q->withTrashed();
+				}]);
 	}
 }

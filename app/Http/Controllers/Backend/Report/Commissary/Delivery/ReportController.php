@@ -37,7 +37,9 @@ class ReportController extends Controller
 
         foreach (Category::all() as $category) {
             $objects        = [];
-            $inventories    = Inventory::where('category_id', $category->id)->get();
+            $inventories    = Inventory::where('category_id', $category->id)
+                                ->withTrashed()
+                                ->get();
             
             foreach ($inventories as $inventory) {
                 $objects[$index] = (object)[
@@ -99,6 +101,7 @@ class ReportController extends Controller
                 $delivered = Delivery::where('item_id', $inventory_id)
                             ->where('date', $days[$i])
                             ->where('type', 'RAW MATERIAL')
+                            ->withTrashed()
                             ->get();
 
                 $datas[$weekdays[$i]] = $delivered;
@@ -134,6 +137,7 @@ class ReportController extends Controller
                 $delivered = Delivery::where('item_id', $inventory_id)
                             ->where('date', $days[$i])
                             ->where('type', 'PRODUCT')
+                            ->withTrashed()
                             ->get();
 
                 $datas[$weekdays[$i]] = $delivered;

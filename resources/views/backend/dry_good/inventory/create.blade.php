@@ -56,6 +56,7 @@
                         <select class="form-control" name="physical_quantity" id="physical_quantity">
                             <option>Mass</option>
                             <option>Volume</option>
+                            <option>Other</option>
                         </select>
                     </div>
 
@@ -113,7 +114,7 @@
                 options += '<option value="lbs">Pound</option>';
                 options += '<option value="oz">Ounce</option>';
             }
-            else
+            else if($(this).val() == 'Volume')
             {
                 options += '<option value="ml">Milliliter</option>';
                 options += '<option value="cl">Centiliter</option>';
@@ -123,6 +124,12 @@
                 options += '<option value="tsp">Tea Spoon</option>';
                 options += '<option value="tbsp">Table Spoon</option>';
                 options += '<option value="gal">Gallon</option>';
+            }
+            else
+            {
+                options += '<option value="pc">Piece</option>';
+                options += '<option value="bottle">Bottle</option>';
+                options += '<option value="can">Can</option>';
             }
 
             $('#unit_type').append(options);

@@ -55,14 +55,14 @@
                 serverSide: true,
                 ajax: '{!! route('admin.commissary.delivery.get') !!}',
                 columns: [
-                    { data: 7 },
-                    { data: 1 },
-                    { data: 2 },
-                    { data: 8 },
-                    { data: 3 },
-                    { data: 5 },
-                    { data: 6 },
-                    { data: 9}
+                    { data: 'item' },
+                    { data: 'quantity' },
+                    { data: 'price' },
+                    { data: 'total' },
+                    { data: 'date' },
+                    { data: 'status' },
+                    { data: 'type' },
+                    { data: 'actions' }
                 ],
                 order: [5, 'asc']
             });
