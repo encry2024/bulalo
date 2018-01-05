@@ -122,9 +122,10 @@
       }
     ?>
     ];
-
-
-    getUnitType(1);
+    
+    @if(count($ingredients))
+      getUnitType({{ $ingredients[0]['id'] }});
+    @endif
 
     $('#ingredient_list').on('change', function(){
       var ing       = $('#ingredient_list').val();

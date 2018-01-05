@@ -75,7 +75,7 @@ class StockController extends Controller
 
 		            $stock = $qty_left->toUnit($inventory->unit_type);
 		        }
-		        else
+		        elseif($inventory->physical_quantity == 'Volume')
 		        {
 		            $stock_qty = new Volume($inventory->stock, $inventory->unit_type);
 
@@ -84,6 +84,10 @@ class StockController extends Controller
 		            $qty_left  = $stock_qty->add($req_qty);
 
 		            $stock = $qty_left->toUnit($inventory->unit_type);
+		        }
+		        else
+		        {
+		        	$stock = $inventory->stock + $request->quantity;
 		        }
 			}
 		}
@@ -99,7 +103,7 @@ class StockController extends Controller
 
 	            $stock = $qty_left->toUnit($inventory->unit_type);
 	        }
-	        else
+	        elseif($inventory->physical_quantity == 'Volume')
 	        {
 	            $stock_qty = new Volume($inventory->stock, $inventory->unit_type);
 
@@ -108,6 +112,10 @@ class StockController extends Controller
 	            $qty_left  = $stock_qty->add($req_qty);
 
 	            $stock = $qty_left->toUnit($inventory->unit_type);
+	        }
+	        else
+	        {
+	        	$stock = $inventory->stock + $request->quantity;
 	        }
 		}
 		

@@ -54,7 +54,7 @@ class RequestController extends Controller
         }
 
         $selections = (object)$selections;
-
+        
         return view('frontend.user.request.create', compact('selections', 'ingredients'));
     }
 

@@ -148,6 +148,10 @@ class StockController extends Controller
 
 		            $stock     = $qty_left->toUnit($inventory->unit_type);
 		        }
+		        else
+		        {
+		        	$stock = $inventory->stock + $request->quantity;
+		        }
 			}
 
 			$inventory->stock = $stock;
@@ -191,6 +195,10 @@ class StockController extends Controller
 
 		            $stock = $qty_left->toUnit($inventory->unit_type);
 		        }
+		        else
+		        {
+		        	$stock = $inventory->stock + $request->quantity;
+		        }
 			}
 
 			$inventory->stock = $stock;
@@ -198,7 +206,7 @@ class StockController extends Controller
 		}
 		else
 		{
-			$inventory->stock = $request->quantity;
+			$inventory->stock = $inventory->stock + $request->quantity;
 			$inventory->save();
 		}
 

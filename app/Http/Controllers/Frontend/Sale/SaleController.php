@@ -121,10 +121,10 @@ class SaleController extends Controller
                         }
                         else
                         {
-                            $stock_dec = $list->quantity;
+                            $stock_dec = $inventory->stock - $list->quantity;
                         }
 
-                        $inventory->stock = $stock_dec  * $list->quantity;
+                        $inventory->stock = $stock_dec;
                         $inventory->save();
                     }
                 } 

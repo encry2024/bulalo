@@ -126,17 +126,22 @@ class ProduceController extends Controller
 
 
     public function destroy(Produce $produce){
-    	$product = $produce->product;
-    	$product->produce = $product->produce - $produce->quantity;
-    	$product->save();
+        if(!empty($product->product))
+        {
+            $product = $produce->product;
+            $product->produce = $product->produce - $produce->quantity;
+            $product->save();
 
-        $ingredients = $product->ingredients;
+            $ingredients = $product->ingredients;
 
-        foreach ($ingredients as $ingredient) {
-            $ingredient->stock = $ingredient->stock + $produce->quantity;
-            $ingredient->save();
+            foreach ($ingredients as $ingredient) {
+                $ingredient->stock = $ingredient->stock + $produce->quantity;
+                $ingredient->save();
+            }
+
+            
         }
-
+        
         $produce->delete();
 
     	return redirect()->route('admin.commissary.produce.index')->withFlashDanger('Produce Product Deleted Successfully!');

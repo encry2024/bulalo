@@ -48,23 +48,41 @@ class ProductController extends Controller
             }
             elseif($ingredients[$i]->supplier == 'Commissary Product')
             {
-                $name = $ingredients[$i]->commissary_product->name;
+                if(!empty($ingredients[$i]->commissary_product))
+                {
+                    $name = $ingredients[$i]->commissary_product->name;
 
-                $selections[$ingredients[$i]->id] = $name;
+                    $selections[$ingredients[$i]->id] = $name;
+                }
+                
             }
             elseif($ingredients[$i]->supplier == 'DryGoods Material')
             {
-                $name = $ingredients[$i]->dry_good_inventory->name;
+                if(!empty($ingredients[$i]->dry_good_inventory))
+                {
+                    $name = $ingredients[$i]->dry_good_inventory->name;
 
-                $selections[$ingredients[$i]->id] = $name;
+                    $selections[$ingredients[$i]->id] = $name;
+                }
             }
             else
             {
-                $name = $ingredients[$i]->commissary_inventory->supplier == 'Other' ? 
-                        $ingredients[$i]->commissary_inventory->other_inventory->name : 
-                        $ingredients[$i]->commissary_inventory->drygood_inventory->name;
+                if(!empty($ingredients[$i]->commissary_inventory))
+                {
+                    if($ingredients[$i]->commissary_inventory->supplier == 'Other')
+                    {
+                        if(!empty($ingredients[$i]->commissary_inventory->other_inventory))
+                            $name = $ingredients[$i]->commissary_inventory->other_inventory->name;
+                    }
+                    else
+                    {
+                        if(!empty($ingredients[$i]->commissary_inventory->drygood_inventory))
+                            $name = $ingredients[$i]->commissary_inventory->drygood_inventory->name;
+                    }
 
-                $selections[$ingredients[$i]->id] = $name;
+                    $selections[$ingredients[$i]->id] = $name;
+                }
+                
             }
         }
 

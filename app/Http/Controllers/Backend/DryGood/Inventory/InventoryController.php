@@ -44,7 +44,6 @@ class InventoryController extends Controller
     public function update(Inventory $Inventory, Request $request){
     	$Inventory->update([
     		'name' 			=> $request->name,
-            'unit_type'     => $request->unit_type,
     		'reorder_level' => $request->reorder_level,
             'category_id'   => $request->category_id
     	]);
