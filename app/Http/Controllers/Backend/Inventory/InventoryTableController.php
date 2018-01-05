@@ -41,28 +41,37 @@ class InventoryTableController extends Controller
 
                     if($inventory->supplier == 'Commissary Product')
                     {
-                        $name = $inventory->commissary_product->name;
+                        if(!empty($inventory->commissary_product))
+                            $name = $inventory->commissary_product->name;
                     }
                     elseif($inventory->supplier == 'Commissary Raw Material')
                     {
-                        $com = $inventory->commissary_inventory;
+                        if(!empty($inventory->commissary_inventory))
+                        {
+                            $com = $inventory->commissary_inventory;
 
-                        if($com->supplier == 'Other')
-                        {
-                            $name = $com->other_inventory->name;
+                            if($com->supplier == 'Other')
+                            {
+                                if(!empty($com->other_inventory))
+                                    $name = $com->other_inventory->name;
+                            }
+                            else
+                            {
+                                if(!empty($com->drygood_inventory))
+                                    $name = $com->drygood_inventory->name;
+                            }
                         }
-                        else
-                        {
-                            $name = $com->drygood_inventory->name;
-                        }
+                        
                     }
                     elseif($inventory->supplier == 'DryGoods Material')
                     {
-                        $name = $inventory->dry_good_inventory->name;
+                        if(!empty($inventory->dry_good_inventory))
+                            $name = $inventory->dry_good_inventory->name;
                     }
                     else
                     {
-                        $name = $inventory->other->name;
+                        if(!empty($inventory->other))
+                            $name = $inventory->other->name;
                     }
 
                     return $name;
