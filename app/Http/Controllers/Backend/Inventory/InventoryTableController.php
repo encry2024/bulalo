@@ -93,6 +93,6 @@ class InventoryTableController extends Controller
                 ->addColumn('actions', function($inventory) {
                     return $inventory->action_buttons;
                 })
-                ->make();
+                ->make(true);
     }
 }

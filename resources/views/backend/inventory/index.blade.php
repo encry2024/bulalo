@@ -53,12 +53,12 @@
                 serverSide: true,
                 ajax: '{!! route('admin.inventory.get') !!}',
                 columns: [
-                    { data: 10 },
-                    { data: 11 },
-                    { data: 3 },
-                    { data: 9 },
-                    { data: 5 },
-                    { data: 12 }
+                    { data: 'name' },
+                    { data: 'stocks' },
+                    { data: 'reorder_level' },
+                    { data: 'category' },
+                    { data: 'supplier' },
+                    { data: 'actions' }
                 ],
                 order: [1, 'asc']
             });

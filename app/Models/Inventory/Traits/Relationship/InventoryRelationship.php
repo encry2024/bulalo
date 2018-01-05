@@ -27,20 +27,20 @@ trait InventoryRelationship
 	}
 
 	public function stocks(){
-		return $this->hasMany(Stock::class);
+		return $this->hasMany(Stock::class)->withTrashed();
 	}
 
 
 	public function commissary_product(){
-		return $this->belongsTo(CommissaryProduct::class, 'inventory_id');
+		return $this->belongsTo(CommissaryProduct::class, 'inventory_id')->withTrashed();
 	}
 
 	public function commissary_inventory(){
-		return $this->belongsTo(CommissaryInventory::class, 'inventory_id');
+		return $this->belongsTo(CommissaryInventory::class, 'inventory_id')->withTrashed();
 	}
 
 	public function dry_good_inventory(){
-		return $this->belongsTo(DryGoodInventory::class, 'inventory_id');
+		return $this->belongsTo(DryGoodInventory::class, 'inventory_id')->withTrashed();
 	}
 
 	public function other(){
