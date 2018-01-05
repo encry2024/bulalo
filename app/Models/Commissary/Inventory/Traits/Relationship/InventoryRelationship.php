@@ -32,6 +32,6 @@ trait InventoryRelationship
 	}
 
 	public function drygood_inventory(){
-		return $this->belongsTo(DryGood::class, 'inventory_id');
+		return $this->belongsTo(DryGood::class, 'inventory_id')->withTrashed();
 	}
 }

@@ -13,11 +13,11 @@ trait DeliveryRelationship
 {
 
 	public function product(){
-		return $this->belongsTo(Product::class, 'item_id');
+		return $this->belongsTo(Product::class, 'item_id')->withTrashed();
 	}
 
 	public function inventory(){
-		return $this->belongsTo(Inventory::class, 'item_id');
+		return $this->belongsTo(Inventory::class, 'item_id')->withTrashed();
 	}
 
 	public function branch(){

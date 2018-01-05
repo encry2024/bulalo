@@ -14,7 +14,7 @@ trait ProductRelationship
 
 	public function ingredients(){
 		return $this->belongsToMany(Inventory::class, 'commissary_inventory_product', 'product_id', 'inventory_id')
-			->withPivot('quantity', 'unit_type', 'created_at');
+			->withPivot('quantity', 'unit_type', 'created_at')->withTrashed();
 	}
 
 	public function produced(){
