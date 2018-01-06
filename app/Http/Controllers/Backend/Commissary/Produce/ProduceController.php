@@ -31,6 +31,7 @@ class ProduceController extends Controller
 
         foreach ($ingredients as $ingredient) {
             $qty_left = 0;
+            $i        = 0;
 
             if($ingredient->physical_quantity == 'Mass')
             {
@@ -39,17 +40,25 @@ class ProduceController extends Controller
                 $req_qty   = new Mass(($request->quantity * $ingredient->pivot->quantity), $ingredient->pivot->unit_type);
 
                 $qty_left  = $stock_qty->subtract($req_qty);
+
+                $i = $qty_left->toUnit($ingredient->unit_type);
             }
-            else
+            elseif($ingredient->physical_quantity == 'Volume')
             {
                 $stock_qty = new Volume($ingredient->stock, $ingredient->unit_type);
 
                 $req_qty   = new Volume(($request->quantity * $ingredient->pivot->quantity), $ingredient->pivot->unit_type);
 
                 $qty_left  = $stock_qty->subtract($req_qty);
+
+                $i = $qty_left->toUnit($ingredient->unit_type);
+            }
+            else
+            {
+                $i = $inventory->stock - $request->quantity;
             }
 
-            if($qty_left->toUnit($ingredient->unit_type) > 0)
+            if($i > 0)
                 $canProduce++;
         }
 
