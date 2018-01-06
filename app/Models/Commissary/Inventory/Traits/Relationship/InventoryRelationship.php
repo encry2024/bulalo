@@ -28,7 +28,7 @@ trait InventoryRelationship
 	}
 
 	public function other_inventory(){
-		return $this->belongsTo(Other::class, 'inventory_id');
+		return $this->belongsTo(Other::class, 'inventory_id')->withTrashed();
 	}
 
 	public function drygood_inventory(){

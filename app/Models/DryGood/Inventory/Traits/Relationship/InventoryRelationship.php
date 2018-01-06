@@ -18,7 +18,7 @@ trait InventoryRelationship
 	}
 
 	public function stocks(){
-		return $this->hasMany(Stock::class);
+		return $this->hasMany(Stock::class)->withTrashed();
 	}
 
 	public function products(){

@@ -68,7 +68,7 @@
                         <?php
                             $total = 0;
 
-                            if(count($stocks))
+                            if(!empty($stocks))
                             {
                                 foreach($stocks as $stock)
                                 {
