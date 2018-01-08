@@ -23,6 +23,8 @@
 
             <div role="tabpanel">
                 <div class="col-lg-6">
+                    <h3>Product Cost : {{ $product->cost }}</h3>
+
                     <table class="table table-bordered">
                         <thead>
                             <th>INGREDIENT NAME</th>

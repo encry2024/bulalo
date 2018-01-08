@@ -113,11 +113,15 @@ class ProductController extends Controller
             foreach ($prod->ingredient as $item) {
                 $price      = 0;
                 $qty_left   = 0;
+                $last_stock = 0;
+                $total      = 0;
+
                 $ingredient = Inventory::findOrFail($item->id);
 
                 if(count($ingredient->stocks))
                 {
-                    $price = $ingredient->stocks->last()->price;
+                    $price      = $ingredient->stocks->last()->price;
+                    $last_stock = $ingredient->stocks->last()->quantity;
                 }
 
                 if($ingredient->physical_quantity == 'Mass')
@@ -127,6 +131,7 @@ class ProductController extends Controller
                     $req_qty   = new Mass($item->quantity, $item->unit_type);
 
                     $qty_left  = $stock_qty->subtract($req_qty)->toUnit($ingredient->unit_type);
+
                 }
                 elseif($ingredient->physical_quantity == 'Volume')
                 {
@@ -141,7 +146,9 @@ class ProductController extends Controller
                     $qty_left = 1;
                 }
 
-                $cost = $cost + ($price * ($item->quantity * (1 / ($qty_left == 0 ? 1 : $qty_left) )));
+                $total = ($price / $last_stock) * $qty_left;
+
+                $cost = $cost + $total;
             }
 
             $prod_size              = new ProductSize();

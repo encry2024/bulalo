@@ -73,7 +73,7 @@
                         {{ Form::select('unit_type', [],old('unit_type'), ['class' => 'form-control', 'id' => 'unit_type']) }}
                     </div>
 
-                    {{ Form::label('quantity', 'Quantity', ['class' => 'col-lg-1 control-label']) }}
+                    {{ Form::label('quantity', 'Quantity', ['class' => 'col-lg-1 control-label', 'id' => 'lbl_quantity']) }}
 
                     <div class="col-lg-1">
                         {{ Form::text('quantity', old('quantity', 0), ['class' => 'form-control', 'id' => 'quantity']) }}
@@ -169,6 +169,8 @@
                     $('#unit_type').find('option').remove();
 
                     $('#unit_type').append(get_unit(data));
+
+                    $('#lbl_quantity').text($($('#unit_type').find('option')[0]).text());
                 }
             });
         }
@@ -207,6 +209,10 @@
 
             if(ing == '[]')
                 e.preventDefault();
+        });
+
+        $('#unit_type').on('change', function(){
+            $('#lbl_quantity').text($(this).find('option:selected').text());      
         });
 
         function addIngredient(){
