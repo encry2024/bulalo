@@ -107,10 +107,12 @@ class ProductController extends Controller
     	$product->save();
 
 
-        foreach ($products as $prod) {
+        foreach ($products as $prod) 
+        {
             $cost = 0;
 
-            foreach ($prod->ingredient as $item) {
+            foreach ($prod->ingredient as $item) 
+            {
                 $price      = 0;
                 $qty_left   = 0;
                 $last_stock = 0;
@@ -145,8 +147,16 @@ class ProductController extends Controller
                 {
                     $qty_left = 1;
                 }
+                
+                if($price != 0 && $last_stock != 0)
+                {
+                    if($qty_left < 0 || $qty_left == 0)
+                        $qty_left = $ingredient->pivot->quantity;                        
 
-                $total = ($price / $last_stock) * $qty_left;
+                    $total = ($price / $last_stock) * $qty_left;
+                }
+                else
+                    $total = 0;
 
                 $cost = $cost + $total;
             }
@@ -292,18 +302,55 @@ class ProductController extends Controller
             {
                 for($i = 0; $i < count($prod->ingredient); $i++)
                 {
+
                     if($prod->ingredient[$i]->id == $ingredient->id)
                     {
-                        $price = 0;
+                        $price      = 0;
+                        $last_stock = 0;
+                        $qty_left   = 0;
 
+                        //update quantity to use
                         $ingredient->pivot->quantity = $prod->ingredient[$i]->quantity;
+
 
                         if(count($ingredient->stocks))
                         {
-                            $price = $ingredient->stocks->last()->price;
+                            $price      = $ingredient->stocks->last()->price;
+                            $last_stock = $ingredient->stocks->last()->quantity;
                         }
 
-                        $cost = $cost + ($price * $prod->ingredient[$i]->quantity);
+                        if($ingredient->physical_quantity == 'Mass')
+                        {
+                            $stock_qty = new Mass(1, $ingredient->unit_type);
+
+                            $req_qty   = new Mass($prod->ingredient[$i]->quantity, $prod->ingredient[$i]->unit_type);
+
+                            $qty_left  = $stock_qty->subtract($req_qty)->toUnit($ingredient->unit_type);
+                        }
+                        elseif($ingredient->physical_quantity == 'Volume')
+                        {
+                            $stock_qty = new Volume(1, $ingredient->unit_type);
+
+                            $req_qty   = new Volume($prod->ingredient[$i]->quantity, $prod->ingredient[$i]->unit_type);
+
+                            $qty_left  = $stock_qty->subtract($req_qty)->toUnit($ingredient->unit_type);
+                        }
+                        else
+                        {
+                            $qty_left = 1;
+                        }
+                        
+                        if($price != 0 && $last_stock != 0)
+                        {
+                            if($qty_left < 0 || $qty_left == 0)
+                                $qty_left = $ingredient->pivot->quantity;                        
+
+                            $total = ($price / $last_stock) * $qty_left;
+                        }
+                        else
+                            $total = 0;
+
+                        $cost = $cost + $total;
                         $ingredient->save();
                     }
                 }
@@ -322,20 +369,53 @@ class ProductController extends Controller
             
             foreach ($not_exist_ingredient as $id) {
                 $ingredient = Inventory::findOrFail($id);
-                $qty        = 0;
 
                 foreach ($prod->ingredient as $item) 
                 {
                     if($id == $item->id)
                     {
-                        $qty = $item->quantity;
 
                         if(count($ingredient->stocks))
                         {
-                           $cost = $cost + ($ingredient->stocks->last()->price * $qty); 
+                            $price      = $ingredient->stocks->last()->price;
+                            $last_stock = $ingredient->stocks->last()->quantity;
                         }
+
+                        if($ingredient->physical_quantity == 'Mass')
+                        {
+                            $stock_qty = new Mass(1, $ingredient->unit_type);
+
+                            $req_qty   = new Mass($item->quantity, $item->unit_type);
+
+                            $qty_left  = $stock_qty->subtract($req_qty)->toUnit($ingredient->unit_type);
+
+                        }
+                        elseif($ingredient->physical_quantity == 'Volume')
+                        {
+                            $stock_qty = new Volume(1, $ingredient->unit_type);
+
+                            $req_qty   = new Volume($item->quantity, $item->unit_type);
+
+                            $qty_left  = $stock_qty->subtract($req_qty)->toUnit($ingredient->unit_type);
+                        }
+                        else
+                        {
+                            $qty_left = 1;
+                        }
+                        
+                        if($price != 0 && $last_stock != 0)
+                        {
+                            if($qty_left < 0 || $qty_left == 0)
+                                $qty_left = $ingredient->pivot->quantity;                        
+
+                            $total = ($price / $last_stock) * $qty_left;
+                        }
+                        else
+                            $total = 0;
+
+                        $cost = $cost + $total;
                        
-                        $ingredient->product_size()->attach($prod_size, ['quantity' => $qty, 'unit_type' => $item->unit_type]);
+                        $ingredient->product_size()->attach($prod_size, ['quantity' => $item->quantity, 'unit_type' => $item->unit_type]);
                     }
                 }
             }
