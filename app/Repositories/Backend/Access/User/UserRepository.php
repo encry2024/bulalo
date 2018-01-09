@@ -172,7 +172,6 @@ class UserRepository extends BaseRepository
         $user->last_name = $data['last_name'];
         $user->email = $data['email'];
         $user->status = isset($data['status']) ? 1 : 0;
-        $user->branch_id = $data['branch_id'];
 
         DB::transaction(function () use ($user, $data, $roles) {
             if ($user->save()) {
@@ -433,7 +432,6 @@ class UserRepository extends BaseRepository
         $user->status = isset($input['status']) ? 1 : 0;
         $user->confirmation_code = md5(uniqid(mt_rand(), true));
         $user->confirmed = isset($input['confirmed']) ? 1 : 0;
-        $user->branch_id = $input['branch_id'];
 
         return $user;
     }
