@@ -141,7 +141,7 @@
 
                                     {{ 
                                         Form::label("ingredient_quantity", 
-                                        "Quantity", 
+                                        "Unit", 
                                         [
                                             "class" => "col-lg-1 control-label", 
                                             "id" => "unit_type"
@@ -150,6 +150,19 @@
 
                                     <div class="col-lg-2">
                                         {{ Form::number("ingredient_quantity", 1, ["class" => "form-control"]) }}
+                                    </div>
+
+                                    {{ 
+                                        Form::label("ingredient_unit", 
+                                        "Quantity/Unit", 
+                                        [
+                                            "class" => "col-lg-1 control-label", 
+                                            "id" => "ingredient_unit"
+                                        ]) 
+                                    }}
+
+                                    <div class="col-lg-2">
+                                        {{ Form::number("ingredient_unit", 1, ["class" => "form-control"]) }}
                                     </div>
                                 </div>
 
@@ -335,10 +348,16 @@
                     html += '{{ Form::select("physical_quantity", [], old("physical_quantity"), ["class" => "form-control select2"]) }}'; 
                     html += '</div>';
 
-                    html += '{{ Form::label("ingredient_quantity", "Quantity", ["class" => "col-lg-1 control-label", "id" => "unit_type"]) }}';
+                    html += '{{ Form::label("ingredient_quantity", "Unit", ["class" => "col-lg-1 control-label", "id" => "unit_type"]) }}';
                     html += '<div class="form-group col-lg-2" style="margin-left:0">';
                     html += '{{ Form::number("ingredient_quantity", 0, ["class" => "form-control"]) }}';
                     html += '</div>';
+
+                    html += '{{ Form::label("ingredient_unit", "Quantity/Unit", ["class" => "col-lg-1 control-label", "id" => "unit_type"]) }}';
+                    html += '<div class="form-group col-lg-2" style="margin-left:0">';
+                    html += '{{ Form::number("ingredient_unit", 0, ["class" => "form-control"]) }}';
+                    html += '</div>';
+
                     html += '</div>';
 
                     html += '<div class="col-lg-12">';
@@ -380,46 +399,65 @@
         });
 
         function add_ingredient(e){
-            var div     = $(e).closest('.panel_product');
-            var select  = $(div).find('select');
-            var id      = $(select).val();
-            var obj     = findIngredients(id)[0];
-            var qty     = $(div).find('input#ingredient_quantity').val();
-            var unit    = $(div).find('select#physical_quantity').val();
+            var div         = $(e).closest('.panel_product');
+            var select      = $(div).find('select');
+            var id          = $(select).val();
+            var obj         = findIngredients(id)[0];
+            var qty         = $(div).find('input#ingredient_quantity').val();
+            var unit        = $(div).find('input#ingredient_unit').val();
+            var physical    = $(div).find('select#physical_quantity').val();
 
             if(!existIngredient(div, obj['id']))
             {
-                var name    = '';
+                if(qty > 0 && unit > 0)
+                {
+                    var name    = '';
 
-                if(obj['supplier'] == 'Other')
-                {
-                    name = obj['other']['name'];
-                }
-                else if(obj['supplier'] == 'Commissary Product')
-                {
-                    name = obj['commissary_product']['name'];
-                }
-                else if(obj['supplier'] == 'DryGoods Material')
-                {
-                    name = obj['dry_good_inventory']['name'];
+                    if(obj['supplier'] == 'Other')
+                    {
+                        name = obj['other']['name'];
+                    }
+                    else if(obj['supplier'] == 'Commissary Product')
+                    {
+                        name = obj['commissary_product']['name'];
+                    }
+                    else if(obj['supplier'] == 'DryGoods Material')
+                    {
+                       name = obj['dry_good_inventory']['name']; 
+                    }
+                    else
+                    {
+                        if(obj['commissary_inventory']!= null)
+                        {
+                            if(obj['commissary_inventory']['supplier'] == 'Other')
+                            {
+                                name = obj['commissary_inventory']['other_inventory']['name'];
+                            }
+                            else
+                            {
+                                name = obj['commissary_inventory']['drygood_inventory']['name'];
+                            }
+                        }
+                    }
+
+                    var row     = '<tr id="' + obj['id'] + '">';
+                        row     += '<td>' + obj['id'] + '</td>';
+                        row     += '<td>' + name + '</td>';
+                        row     += '<td>' + (qty * unit) + '</td>';
+                        row     += '<td>' + physical + '</td>';
+                        row     += '<td><button type="button" class="btn btn-xs btn-danger" onclick="removeRow(this)">Remove</button></td>';
+                        row     += '</tr>';
+
+                    $(div).find('table').find('tbody').append(row);
+                    $(div).find('input#ingredient_quantity').val(1);
+                    $(div).find('input#ingredient_unit').val(1);
+
+                    scrollTo($(div).find('table').offset().top);
                 }
                 else
                 {
-                    name = obj['commissary_inventory']['name'];
+                    swal("Alert!", "Unit and Quantity must be greater than 1", "warning");
                 }
-
-                var row     = '<tr id="' + obj['id'] + '">';
-                    row     += '<td>' + obj['id'] + '</td>';
-                    row     += '<td>' + name + '</td>';
-                    row     += '<td>' + qty + '</td>';
-                    row     += '<td>' + unit + '</td>';
-                    row     += '<td><button type="button" class="btn btn-xs btn-danger" onclick="removeRow(this)">Remove</button></td>';
-                    row     += '</tr>';
-
-                $(div).find('table').find('tbody').append(row);
-                $(div).find('input#ingredient_quantity').val(1);
-
-                scrollTo($(div).find('table').offset().top);
             }
         }
 

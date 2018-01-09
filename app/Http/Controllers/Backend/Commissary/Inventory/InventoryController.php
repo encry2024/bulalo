@@ -55,7 +55,7 @@ class InventoryController extends Controller
 
     public function edit(Inventory $inventory){
     	$categories = Category::pluck('name', 'id');
-
+        
     	return view('backend.commissary.inventory.edit', compact('categories', 'inventory'));
     }
 

@@ -164,7 +164,7 @@ abstract class AbstractPhysicalQuantity implements PhysicalQuantityInterface
      */
     public function __toString()
     {
-        // return trim($this->originalValue . ' ' . static::getUnit($this->originalUnit)->getName());
+        return trim($this->originalValue . ' ' . static::getUnit($this->originalUnit)->getName());
         return trim($this->originalValue);
     }
 

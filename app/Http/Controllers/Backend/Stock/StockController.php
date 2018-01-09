@@ -75,16 +75,9 @@ class StockController extends Controller
 	public function store(ManageRequest $request){
 		$stock 		= 0;
 		$inventory 	= Inventory::find($request->inventory_id);
-
-		$product_sizes = ProductSize::with(['ingredients' => function($q) use($inventory) {
-				$q->where('inventory_product_size.inventory_id', $inventory->id);
-			 } ])->get();
-
 		
 		// check if ingredient is from commissary
 		
-		
-
 		if($inventory->supplier == 'Commissary Product')
 		{
 			$delivery = Delivery::where('item_id', $inventory->inventory_id)
@@ -212,6 +205,8 @@ class StockController extends Controller
 
 		Stock::create($request->all());
 
+		$this->updateProductCost();
+
 		return redirect()->route('admin.stock.index')->withFlashSuccess('Stock Added Successfully!');
 	}
 
@@ -281,26 +276,75 @@ class StockController extends Controller
 	}
 
 	public function updateProductCost(){
-		$products = Product::all();
+		$products = Product::with('product_size', 'product_size.ingredients')->orderBy('id', 'desc')->get();
 
-		foreach ($products as $product) {
-			$product_cost  = 0;
-			$inventories   = $product->inventories;
+		foreach ($products as $product) 
+		{
+			$product_sizes = $product->product_size;
 
-			if(count($inventories))
+			foreach($product_sizes as $product_size)
 			{
-				foreach ($inventories as $inventory) {
-					$stock = $inventory->stocks->last();
+				$total        = 0;
+				$product_cost = 0;
+				$ingredients  = $product_size->ingredients;
 
-					if(count($stock)){
-						$product_cost += $stock->price;
+				foreach($ingredients as $ingredient)
+				{
+
+					$qty_left 	= 0;
+					$price    	= 0;
+					$last_stock = 0;
+
+					if(count($ingredient->stocks))
+	                {
+	                    $price      = $ingredient->stocks->last()->price;
+	                    $last_stock = $ingredient->stocks->last()->quantity;
+	                }
+
+					if($ingredient->physical_quantity == 'Mass')
+					{
+					    $stock_qty = new Mass(1, $ingredient->unit_type);
+
+					    $req_qty   = new Mass($ingredient->pivot->quantity, $ingredient->pivot->unit_type);
+
+					    $qty_left  = $stock_qty->subtract($req_qty)->toUnit($ingredient->unit_type);	
+
 					}
+					elseif($ingredient->physical_quantity == 'Volume')
+					{
+					    $stock_qty = new Volume(1, $ingredient->unit_type);
+
+					    $req_qty   = new Volume($ingredient->pivot->quantity, $ingredient->pivot->unit_type);
+
+					    $qty_left  = $stock_qty->subtract($req_qty)->toUnit($ingredient->unit_type);
+					}
+					else
+					{
+					    $qty_left = 1;
+					}
+
+
+					if($price != 0 && $last_stock != 0)
+					{
+						if($qty_left < 0 || $qty_left == 0)
+							$qty_left = $ingredient->pivot->quantity;
+
+	                    $total = ($price / $last_stock) * $qty_left;
+
+					}
+	                else
+	                    $total = 0;
+
+	                $product_cost = $product_cost + $total;
+
 				}
+
+				$product_size->cost = $product_cost;
+				$product_size->save();
 			}
 
-			$product->cost = $product_cost;
-			$product->save();
 		}
+
 	}
 
 }
