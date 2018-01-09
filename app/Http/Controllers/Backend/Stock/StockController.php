@@ -239,13 +239,9 @@ class StockController extends Controller
 		$stock->status			= $request->status.($request->status == 'EXPIRE' ? 'D' :'ED');
 		$stock->save();
 
-		$stock = Stock::selectRaw('sum(quantity) as "quantity"')
-				->where('inventory_id', $request->inventory_id)
-				->where('status', 'fresh')
-				->first();
 
 		$inventory = Inventory::find($request->inventory_id);
-		$inventory->stock = $inventory->stock - (count($stock->quantity) > 0 ? $stock->quantity:0);
+		$inventory->stock = $inventory->stock - $stock->quantity;
 		$inventory->save();
 
 		return redirect()->route('admin.stock.index')->withFlashSuccess('Stock Updated Successfully!');
