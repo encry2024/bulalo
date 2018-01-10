@@ -128,20 +128,34 @@ class ProductController extends Controller
 
                 if($ingredient->physical_quantity == 'Mass')
                 {
-                    $stock_qty = new Mass(1, $ingredient->unit_type);
+                    if($ingredient->unit_type == $item->unit_type)
+                    {
+                        $qty_left = $item->quantity;
+                    }
+                    else
+                    {
+                        $stock_qty = new Mass(1, $ingredient->unit_type);
 
-                    $req_qty   = new Mass($item->quantity, $item->unit_type);
+                        $req_qty   = new Mass($item->quantity, $item->unit_type);
 
-                    $qty_left  = $stock_qty->subtract($req_qty)->toUnit($ingredient->unit_type);
-
+                        $qty_left  = $stock_qty->subtract($req_qty)->toUnit($ingredient->unit_type);
+                    }
                 }
                 elseif($ingredient->physical_quantity == 'Volume')
                 {
-                    $stock_qty = new Volume(1, $ingredient->unit_type);
+                    if($ingredient->unit_type == $item->unit_type)
+                    {
+                        $qty_left = $item->quantity;
+                    }
+                    else
+                    {
+                        $stock_qty = new Volume(1, $ingredient->unit_type);
 
-                    $req_qty   = new Volume($item->quantity, $item->unit_type);
+                        $req_qty   = new Volume($item->quantity, $item->unit_type);
 
-                    $qty_left  = $stock_qty->subtract($req_qty)->toUnit($ingredient->unit_type);
+                        $qty_left  = $stock_qty->subtract($req_qty)->toUnit($ingredient->unit_type);
+                    }
+                    
                 }
                 else
                 {
@@ -151,7 +165,7 @@ class ProductController extends Controller
                 if($price != 0 && $last_stock != 0)
                 {
                     if($qty_left < 0 || $qty_left == 0)
-                        $qty_left = $ingredient->pivot->quantity;                        
+                        $qty_left = $item->quantity;                        
 
                     $total = ($price / $last_stock) * $qty_left;
                 }
