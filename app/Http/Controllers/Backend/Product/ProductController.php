@@ -145,7 +145,7 @@ class ProductController extends Controller
                 }
                 else
                 {
-                    $qty_left = 1;
+                    $qty_left = $item->quantity;
                 }
                 
                 if($price != 0 && $last_stock != 0)
