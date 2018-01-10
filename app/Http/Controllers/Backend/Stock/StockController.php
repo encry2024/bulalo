@@ -299,20 +299,34 @@ class StockController extends Controller
 
 					if($ingredient->physical_quantity == 'Mass')
 					{
-					    $stock_qty = new Mass(1, $ingredient->unit_type);
+					    if($ingredient->unit_type == $ingredient->pivot->quantity)
+	                    {
+	                        $qty_left = $ingredient->pivot->quantity;
+	                    }
+	                    else
+	                    {
+	                        $stock_qty = new Mass(1, $ingredient->unit_type);
 
-					    $req_qty   = new Mass($ingredient->pivot->quantity, $ingredient->pivot->unit_type);
+	                        $req_qty   = new Mass($ingredient->pivot->quantity, $ingredient->pivot->unit_type);
 
-					    $qty_left  = $stock_qty->subtract($req_qty)->toUnit($ingredient->unit_type);	
+	                        $qty_left  = $stock_qty->subtract($req_qty)->toUnit($ingredient->unit_type);
+	                    }
 
 					}
 					elseif($ingredient->physical_quantity == 'Volume')
 					{
-					    $stock_qty = new Volume(1, $ingredient->unit_type);
+					    if($ingredient->unit_type == $ingredient->pivot->quantity)
+	                    {
+	                        $qty_left = $ingredient->pivot->quantity;
+	                    }
+	                    else
+	                    {
+	                        $stock_qty = new Mass(1, $ingredient->unit_type);
 
-					    $req_qty   = new Volume($ingredient->pivot->quantity, $ingredient->pivot->unit_type);
+	                        $req_qty   = new Mass($ingredient->pivot->quantity, $ingredient->pivot->unit_type);
 
-					    $qty_left  = $stock_qty->subtract($req_qty)->toUnit($ingredient->unit_type);
+	                        $qty_left  = $stock_qty->subtract($req_qty)->toUnit($ingredient->unit_type);
+	                    }
 					}
 					else
 					{

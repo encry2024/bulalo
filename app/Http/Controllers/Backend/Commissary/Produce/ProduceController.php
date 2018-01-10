@@ -122,7 +122,7 @@ class ProduceController extends Controller
                     $price      = $ingredient->stocks->last()->price;
                     $last_stock = $ingredient->stocks->last()->quantity;
 
-                    $total      = ($price / $last_stock) * $request->quantity;
+                    $total      = ($price / $last_stock) * ($request->quantity * $ingredient->pivot->quantity);
 
                     $cost       = $cost + $total;
                 }
