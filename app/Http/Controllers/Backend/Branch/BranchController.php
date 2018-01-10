@@ -8,15 +8,18 @@ use App\Models\Branch\Branch;
 
 class BranchController extends Controller
 {
-	public function index(){
+	public function index()
+	{
 		return view('backend.branch.index');
 	}
 
-	public function create(){
+	public function create()
+	{
 		return view('backend.branch.create');
 	}
 
-	public function store(Request $request){
+	public function store(Request $request)
+	{
 		Branch::create($request->all());
 
 		return redirect()->route('admin.branch.index')->withFlashSuccess('New Branch has been created.');
@@ -34,7 +37,8 @@ class BranchController extends Controller
 		return redirect()->route('admin.branch.index')->withFlashSuccess('Branch has been updated!');
 	}
 
-	public function destroy(Branch $branch){
+	public function destroy(Branch $branch)
+	{
     	$branch->softDeletes();
 
     	return redirect()->route('admin.branch.index')->withFlashSuccess('Branch has been deleted!');

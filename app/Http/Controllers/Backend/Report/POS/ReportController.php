@@ -10,7 +10,8 @@ use App\Repositories\Backend\Report\ReportRepository;
 
 class ReportController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $from   = date('Y-m-d');
         $to     = date('Y-m-d');
 
@@ -28,13 +29,15 @@ class ReportController extends Controller
         return view('backend.report.pos.sale.index', compact('orders', 'from', 'to'));
     }
 
-    public function show($id){
+    public function show($id)
+    {
     	$order = Order::findOrFail($id);
 
     	return view('backend.report.pos.sale.show', compact('order'));
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
     	$order = Order::findOrFail($id);
 
     	foreach ($order->order_list as $list) {

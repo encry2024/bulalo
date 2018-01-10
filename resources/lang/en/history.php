@@ -18,11 +18,20 @@ return [
         'none_for_entity' => 'There is no history for this :entity.',
         'recent_history'  => 'Recent History',
 
+        'category' => [
+            'created'               => 'created category',
+            'updated'               => 'updated category',
+            'deleted'               => 'deleted category',
+            'restored'              => 'restored category',
+            'permanently_deleted'   => 'permanently deleted category'
+        ],
+
         'roles' => [
             'created' => 'created role',
             'deleted' => 'deleted role',
             'updated' => 'updated role',
         ],
+
         'users' => [
             'changed_password'    => 'changed password for user',
             'confirmed' => 'confirmed user',

@@ -13,16 +13,19 @@ use App\Models\RequestDetail\RequestDetail;
 trait RequestMessageRelationship
 {
 
-	public function user(){
+	public function user()
+    {
 		return $this->belongsTo(User::class);
 	}
 
-	public function response(){
+	public function response()
+    {
 		return $this->hasOne(ResponseMessage::class, 'request_id');
 	}
 
 
-	public function request_details(){
+	public function request_details()
+    {
 		return $this->hasMany(RequestDetail::class, 'request_id');
 	}
 }

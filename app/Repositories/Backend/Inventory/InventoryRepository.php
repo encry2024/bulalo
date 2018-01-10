@@ -11,7 +11,8 @@ class InventoryRepository extends BaseRepository
 {
 	const MODEL = Inventory::class;
 
-	public function getForDataTable(){
+	public function getForDataTable()
+    {
 		return $this->query();
 	}
 }

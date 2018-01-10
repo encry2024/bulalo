@@ -5,7 +5,8 @@ namespace App\Models\Category\Traits\Attribute;
 trait CategoryAttribute
 {
 
-	public function getDeleteButtonAttribute(){
+	public function getDeleteButtonAttribute()
+    {
 		return '<a href="'.route('admin.category.destroy', $this).'"
                  data-method="delete"
                  data-trans-button-cancel="'.trans('buttons.general.cancel').'"

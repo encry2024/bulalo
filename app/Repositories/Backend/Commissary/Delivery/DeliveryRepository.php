@@ -11,14 +11,20 @@ class DeliveryRepository extends BaseRepository
 {
 	const MODEL = Delivery::class;
 
-	public function getForDataTable(){
-		return $this->query()
-				->with(['inventory' => function($q) {
+	public function getForDataTable()
+	{
+		return $this->query()->with(
+			[
+				'inventory' => function ($q) {
 					$q->withTrashed();
-				}])
-				->with(['product' => function($q) {
+				}
+			]
+		)->with(
+			[
+				'product' => function ($q) {
 					$q->withTrashed();
-				}])
-				->select('id', 'quantity', 'price', 'date', 'item_id', 'status', 'type');
+				}
+			]
+		)->select('id', 'quantity', 'price', 'date', 'item_id', 'status', 'type');
 	}
 }

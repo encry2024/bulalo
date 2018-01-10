@@ -12,15 +12,18 @@ use App\Models\Branch\Branch;
 trait DeliveryRelationship
 {
 
-	public function product(){
+	public function product()
+    {
 		return $this->belongsTo(Product::class, 'item_id')->withTrashed();
 	}
 
-	public function inventory(){
+	public function inventory()
+    {
 		return $this->belongsTo(Inventory::class, 'item_id')->withTrashed();
 	}
 
-	public function branch(){
+	public function branch()
+    {
 		return $this->belongsTo(Branch::class);
 	}
 }

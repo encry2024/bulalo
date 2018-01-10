@@ -11,11 +11,13 @@ use App\Models\Branch\Branch;
 trait DisposeRelationship
 {
 
-	public function inventory(){
+	public function inventory()
+    {
 		return $this->belongsTo(Inventory::class);
 	}
 
-	public function branch(){
+	public function branch()
+    {
 		return $this->belongsTo(Branch::class);
 	}
 }

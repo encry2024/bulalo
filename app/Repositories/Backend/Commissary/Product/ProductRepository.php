@@ -11,8 +11,8 @@ class ProductRepository extends BaseRepository
 {
 	const MODEL = Product::class;
 
-	public function getForDataTable(){
-		return $this->query()
-				->select('id', 'name', 'produce', 'price', 'cost', 'category_id');
+	public function getForDataTable()
+    {
+		return $this->query()->select('id', 'name', 'produce', 'price', 'cost', 'category_id');
 	}
 }

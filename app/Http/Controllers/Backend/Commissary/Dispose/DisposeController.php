@@ -11,11 +11,13 @@ use App\Models\Branch\Branch;
 
 class DisposeController extends Controller
 {
-    public function index(){
+    public function index()
+    {
     	return view('backend.commissary.dispose.index');
     }
 
-    public function create(){
+    public function create()
+    {
         $ingredients = Inventory::all();
         $products    = Product::orderBy('name')->get()->pluck('name', 'id'); 
         $inventories = [];
@@ -41,11 +43,11 @@ class DisposeController extends Controller
     	return view('backend.commissary.dispose.create', compact('inventories', 'products'));
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
     	$inventory = Inventory::findOrFail($request->inventory_id);
 
-    	if($request->quantity <= $inventory->stock)
-    	{
+    	if($request->quantity <= $inventory->stock) {
     		$dispose = new Dispose();
 	    	$dispose->inventory_id 	= $inventory->id;
 	    	$dispose->date 		   	= $request->date;
@@ -66,7 +68,8 @@ class DisposeController extends Controller
     	return redirect()->back()->withFlashDanger('Dispose quantity is greater than stocks');
     }
 
-    public function destroy(Dispose $dispose){
+    public function destroy(Dispose $dispose)
+    {
     	$inventory = Inventory::findOrFail($dispose->inventory_id);
     	$inventory->stock = $inventory->stock + $dispose->quantity;
     	$inventory->save();

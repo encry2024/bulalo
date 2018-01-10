@@ -11,8 +11,8 @@ class ProduceRepository extends BaseRepository
 {
 	const MODEL = Produce::class;
 
-	public function getForDataTable(){
-		return $this->query()
-				->select('id', 'quantity', 'date');
+	public function getForDataTable()
+    {
+		return $this->query()->select('id', 'quantity', 'date');
 	}
 }

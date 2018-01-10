@@ -11,7 +11,8 @@ use App\Models\Inventory\Inventory as POS;
 trait GoodsReturnRelationship
 {
 
-	public function inventory(){
+	public function inventory()
+    {
 		return $this->belongsTo(DryGood::class, 'inventory_id');
 	}
 

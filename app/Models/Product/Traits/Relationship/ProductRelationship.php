@@ -11,11 +11,13 @@ use App\Models\OrderList\OrderList;
 trait ProductRelationship
 {
 
-	public function product_size(){
+	public function product_size()
+    {
 		return $this->hasMany(ProductSize::class);
 	}
 
-	public function order_list(){
+	public function order_list()
+    {
 		return $this->hasMany(OrderList::class);
 	}
 

@@ -14,18 +14,21 @@ use App\Http\Requests\Backend\Inventory\StoreInventoryRequest;
 
 class InventoryController extends Controller
 {
-    public function index(){
+    public function index()
+    {
     	return view('backend.commissary.inventory.index');
     }
 
-    public function create(){
+    public function create()
+    {
         $categories = Category::pluck('name', 'id');
         $dry_goods  = DryGood::pluck('name', 'id');
 
     	return view('backend.commissary.inventory.create', compact('categories', 'dry_goods'));
     }
 
-    public function store(StoreInventoryRequest $request){
+    public function store(StoreInventoryRequest $request)
+    {
     	$item = null;
 
         if($request->supplier == 'Other')
@@ -53,30 +56,35 @@ class InventoryController extends Controller
     	return redirect()->route('admin.commissary.inventory.index');
     }
 
-    public function edit(Inventory $inventory){
+    public function edit(Inventory $inventory)
+    {
     	$categories = Category::pluck('name', 'id');
         
     	return view('backend.commissary.inventory.edit', compact('categories', 'inventory'));
     }
 
-    public function update(Inventory $Inventory, Request $request){
-    	$Inventory->update([
-    		'reorder_level' => $request->reorder_level,
-            'category_id'   => $request->category_id
-    	]);
+    public function update(Inventory $Inventory, Request $request)
+    {
+    	$Inventory->update(
+            [
+        		'reorder_level' => $request->reorder_level,
+                'category_id'   => $request->category_id
+        	]
+        );
 
     	return redirect()->route('admin.commissary.inventory.index')->withFlashSuccess('Inventory Updated Successfully!');
     }
 
-    public function destroy(Inventory $Inventory){
+    public function destroy(Inventory $Inventory)
+    {
     	$Inventory->delete();
 
     	return redirect()->route('admin.commissary.inventory.index')->withFlashDanger('Inventory Deleted Successfully!');
     }
 
-    public function getUnit($id, $supplier){
-        if($supplier == 'DryGoods Material')
-        {
+    public function getUnit($id, $supplier)
+    {
+        if($supplier == 'DryGoods Material') {
             return DryGood::findOrFail($id);
         }
 

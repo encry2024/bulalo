@@ -10,7 +10,8 @@ use App\Models\Access\User\User;
 trait AuditTrailRelationship
 {
 
-	public function user(){
+	public function user()
+    {
 		return $this->belongsTo(User::class);
 	}
 

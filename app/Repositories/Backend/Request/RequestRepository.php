@@ -11,7 +11,8 @@ class RequestRepository extends BaseRepository
 {
 	const MODEL = RequestMessage::class;
 
-	public function getForDataTable(){
+	public function getForDataTable()
+    {
 		return $this->query();
 	}
 }

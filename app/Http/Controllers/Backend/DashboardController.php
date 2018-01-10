@@ -21,6 +21,7 @@ use DB;
  */
 class DashboardController extends Controller
 {
+
     /**
      * @return \Illuminate\View\View
      */
@@ -31,14 +32,14 @@ class DashboardController extends Controller
     	$tops 		= [];
         $requests   = RequestMessage::orderBy('id', 'desc')->take(5)->get();
 
-    	for($i = 1; $i <= 12; $i++){
+    	for($i = 1; $i <= 12; $i++) {
     		$date = strlen($i) > 1 ? $i.'/01/2017' : '0'.$i.'/01/2017';
 
     		$str = date('M', strtotime($date));
     		$monthNames[$i -1 ] = $str;
     	}
 
-    	for($i = 1; $i <= 12; $i++){
+    	for($i = 1; $i <= 12; $i++) {
     		$i = $i < 10 ? '0'.$i : $i;
     		$total = Order::selectRaw('sum(payable) as "total"')
     				->whereBetween('created_at', [date('Y-'.$i.'-01'), date('Y-'.$i.'-31')])
@@ -48,17 +49,20 @@ class DashboardController extends Controller
     	 	$months[$i - 1] = $total;
     	}
 
-		$products = Product::with([
-						'order_list' => function($q) 
-						{
-							$q->whereBetween('created_at', [date('Y-m-01'), date('Y-m-31')])
-						  	  ->orderBy('product_id');
-						}
-					])->withTrashed()->get();
+		$products = Product::with(
+            [
+				'order_list' => function ($q) 
+				{
+					$q->whereBetween('created_at', 
+                        [
+                            date('Y-m-01'), date('Y-m-31')
+                        ]
+                    )->orderBy('product_id');
+				}
+			]
+        )->withTrashed()->get();
 
-
-		for($i = 0; $i < count($products); $i++)
-		{
+		for($i = 0; $i < count($products); $i++) {
 			$count   = 0;
 			$orders  = count($products[$i]->order_list);
 

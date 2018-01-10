@@ -5,11 +5,13 @@ namespace App\Models\DryGood\GoodsReturn\Traits\Attribute;
 trait GoodsReturnAttribute
 {
 
-	public function getEditButtonAttribute(){
+	public function getEditButtonAttribute()
+    {
 		return '<a href="'.route('admin.dry_good.goods_return.edit', $this->id).'" class="btn btn-xs btn-primary"><i class="fa fa-pencil" data-toggle="tooltip" data-placement="top" title="'.trans('buttons.general.crud.edit').'"></i></a> ';
 	}
 
-	public function getDeleteButtonAttribute(){
+	public function getDeleteButtonAttribute()
+    {
 		return '<a href="'.route('admin.dry_good.goods_return.destroy', $this).'"
                  data-method="delete"
                  data-trans-button-cancel="'.trans('buttons.general.cancel').'"
@@ -18,7 +20,8 @@ trait GoodsReturnAttribute
                  class="btn btn-xs btn-danger"><i class="fa fa-trash" data-toggle="tooltip" data-placement="top" title="'.trans('buttons.general.crud.delete').'"></i></a> ';
 	}
 
-	public function getActionButtonsAttribute(){
+	public function getActionButtonsAttribute()
+    {
 		return $this->delete_button;
 	}
 }

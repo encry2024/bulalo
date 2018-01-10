@@ -11,11 +11,13 @@ use App\Models\Inventory\Inventory;
 trait ProductSizeRelationship
 {
 
-	public function product(){
+	public function product()
+    {
 		return $this->belongsTo(Product::class);
 	}
 
-	public function ingredients(){
+	public function ingredients()
+    {
 		return $this->belongsToMany(Inventory::class, 'inventory_product_size', 'product_size_id', 'inventory_id')
 				->withPivot(['quantity', 'unit_type']);
 	}

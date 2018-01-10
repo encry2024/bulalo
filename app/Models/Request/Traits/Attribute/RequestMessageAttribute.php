@@ -7,11 +7,13 @@ use App\Models\Request\RequestMessage;
 trait RequestMessageAttribute
 {
 
-	public function getEditButtonAttribute(){
+	public function getEditButtonAttribute()
+    {
 		return '<a href="'.route('admin.request.show', $this->id).'" class="btn btn-xs btn-primary"><i class="fa fa-eye" data-toggle="tooltip" data-placement="top" title="'.trans('buttons.general.crud.view').'"></i></a> ';
 	}
 
-	public function getDeleteButtonAttribute(){
+	public function getDeleteButtonAttribute()
+    {
 		return '<a href="'.route('admin.request.destroy', $this).'"
                  data-method="delete"
                  data-trans-button-cancel="'.trans('buttons.general.cancel').'"
@@ -20,7 +22,8 @@ trait RequestMessageAttribute
                  class="btn btn-xs btn-danger"><i class="fa fa-trash" data-toggle="tooltip" data-placement="top" title="'.trans('buttons.general.crud.delete').'"></i></a> ';
 	}
 
-	public function getActionButtonsAttribute(){
+	public function getActionButtonsAttribute()
+    {
 		return $this->edit_button;
 	}
 }

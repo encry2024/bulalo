@@ -11,9 +11,8 @@ class ReportCommissaryRepository extends BaseRepository
 {
 	const MODEL = Order::class;
 
-	public function getForDataTable(){
-		return $this->query()
-				->select('id', 'transaction_no', 'created_at')
-				->orderBy('created_at', 'desc');
+	public function getForDataTable()
+    {
+		return $this->query()->select('id', 'transaction_no', 'created_at')->orderBy('created_at', 'desc');
 	}
 }
