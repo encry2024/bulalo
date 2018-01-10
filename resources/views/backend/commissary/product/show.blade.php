@@ -31,14 +31,12 @@
                             <th>QUANTITY</th>
                         </thead>
                         <tbody>
-                            @if(count($product))
-                                @foreach($product->ingredients as $ingredient)
-                                <tr>
-                                    <td>{{ $ingredient->supplier == 'Other' ? $ingredient->other_inventory->name : $ingredient->drygood_inventory->name }}</td>
-                                    <td>{{ $ingredient->pivot->quantity }}</td>
-                                </tr>
-                                @endforeach
-                            @endif
+                            @foreach($product->ingredients as $ingredient)
+                            <tr>
+                                <td>{{ $ingredient->supplier == 'Other' ? $ingredient->other_inventory->name : $ingredient->drygood_inventory->name }}</td>
+                                <td>{{ $ingredient->pivot->quantity }}</td>
+                            </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>                
