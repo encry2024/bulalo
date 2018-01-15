@@ -11,5 +11,5 @@ class Order extends Model
 {
 	use OrderAttribute, OrderRelationship;
 
-    protected $fillable = ['id', 'transaction_no', 'cash', 'change', 'payable', 'discount', 'user_id'];
+    protected $fillable = ['id', 'transaction_no', 'cash', 'change', 'payable', 'discount', 'type', 'table_no', 'status', 'user_id'];
 }

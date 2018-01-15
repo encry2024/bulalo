@@ -41,6 +41,13 @@
                             </td>
                         </tr>
                         @endforeach
+
+                        <tr>
+                            <td style="width:30%"> <a href="{{ route('admin.setting_table.index') }}" class="btn btn-default btn-block">
+                                    Table
+                                </a></td>
+                            <td>Fixed Description</td>
+                        </tr>
                     </tbody>
                 </table>
             </div><!--table-responsive-->

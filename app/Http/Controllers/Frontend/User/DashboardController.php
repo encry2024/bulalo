@@ -10,6 +10,7 @@ use App\Models\Notification\Notification;
 use App\Models\Request\RequestMessage;
 use App\Models\Response\ResponseMessage;
 use App\Models\Setting\Setting;
+use App\Models\Setting\Table;
 use Auth;
 /**
  * Class DashboardController.

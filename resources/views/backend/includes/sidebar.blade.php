@@ -292,6 +292,12 @@
                             <span>{{ trans('labels.backend.access.roles.management') }}</span>
                         </a>
                     </li>
+                    <li class="{{ active_class(Active::checkUriPattern('admin/setting/*')) }}">
+                        <a href="{{ route('admin.setting.index') }}">
+                            <i class="fa fa-circle-o"></i>
+                            <span>Setting</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
             @endauth

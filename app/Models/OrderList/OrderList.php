@@ -11,5 +11,5 @@ class OrderList extends Model
 {
     use OrderListAttribute, OrderListRelationship;
 
-    protected $fillable = ['order_id', 'product_id', 'price', 'quantity', 'size'];
+    protected $fillable = ['order_id', 'product_id', 'price', 'quantity', 'product_size_id'];
 }

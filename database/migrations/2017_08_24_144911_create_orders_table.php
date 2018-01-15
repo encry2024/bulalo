@@ -20,6 +20,9 @@ class CreateOrdersTable extends Migration
             $table->decimal('change', 10, 2);
             $table->decimal('payable', 10, 2);
             $table->decimal('discount', 10, 2);
+            $table->string('type');
+            $table->integer('table_no');
+            $table->string('status');
             $table->integer('user_id')->unsigned();
             $table->timestamps();
             $table->timestamp('deleted_at')->nullable();

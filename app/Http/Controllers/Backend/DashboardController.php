@@ -66,7 +66,7 @@ class DashboardController extends Controller
 			// if product has orders
 			// sum all product sold quantity
 			//
-			if(count($orders))
+			if(!empty($orders))
 			{
 				foreach ($products[$i]->order_list as $order) 
 				{
