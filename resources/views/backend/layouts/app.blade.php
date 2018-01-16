@@ -89,6 +89,7 @@
 
             $('#daterange-btn').daterangepicker(
                 {
+                    timePicker: true,
                     ranges   : {
                         'This Week'   : [moment().add(1, 'week').startOf('week').subtract(6,'day'), moment().endOf('week').add(1, 'day')],
                         'Last 2 Weeks': [moment().subtract(1, 'week').startOf('week'), moment().subtract(1, 'week').endOf('week')],
@@ -102,7 +103,8 @@
                     function (start, end) {
                         $('#from').val(start.format('YYYY-MM-DD'));
                         $('#to').val(end.format('YYYY-MM-DD'));
-
+                        $("#time_from").val(start.format('H:mm:ss'));
+                        $("#time_to").val(end.format('H:mm:ss'));
                 }
             );
         

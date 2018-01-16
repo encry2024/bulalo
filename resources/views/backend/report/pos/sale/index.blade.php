@@ -27,12 +27,14 @@
                     <div class="col-lg-12">
                         <div class="form-group col-lg-2">
                             <label>From</label>
-                            <input class="form-control" type="text" name="from" id="from" readonly required value="<?php echo $from; ?>">                            
+                            <input class="form-control" type="text" name="from" id="from" readonly required value="<?php echo $from; ?>">
+                            <input class="form-control" type="text" name="time_from" id="time_from" readonly required value="<?php echo $time_from; ?>">                          
                         </div>
 
                         <div class="form-group col-lg-2">
                             <label>To</label>
-                            <input class="form-control" type="text" name="to" id="to" readonly required value="<?php echo $to; ?>">                            
+                            <input class="form-control" type="text" name="to" id="to" readonly required value="<?php echo $to; ?>">
+                            <input class="form-control" type="text" name="time_to" id="time_to" readonly required value="<?php echo $time_to; ?>">
                         </div>
 
                         <div class="form-group col-lg-2">
