@@ -3,6 +3,7 @@
 namespace App\Models\Order\Traits\Attribute;
 
 use App\Models\Order\Order;
+use App\Models\OrderList\OrderList;
 
 trait OrderAttribute
 {

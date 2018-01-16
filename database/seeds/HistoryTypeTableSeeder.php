@@ -21,7 +21,9 @@ class HistoryTypeTableSeeder extends Seeder
     public function run()
     {
         $this->disableForeignKeys();
-        $this->truncateMultiple(['history_types', 'history']);
+        $this->truncateMultiple([
+            'history_types', 'history', 'categories', 'settings', 'tables'
+        ]);
 
         $types = [
             [
@@ -86,5 +88,7 @@ class HistoryTypeTableSeeder extends Seeder
         ];
 
         DB::table('settings')->insert($settings);
+
+        DB::table('tables')->insert([['count' => 5]]);
     }
 }

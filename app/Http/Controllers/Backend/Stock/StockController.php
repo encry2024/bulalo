@@ -239,13 +239,9 @@ class StockController extends Controller
 		$stock->status			= $request->status.($request->status == 'EXPIRE' ? 'D' :'ED');
 		$stock->save();
 
-		$stock = Stock::selectRaw('sum(quantity) as "quantity"')
-				->where('inventory_id', $request->inventory_id)
-				->where('status', 'fresh')
-				->first();
 
 		$inventory = Inventory::find($request->inventory_id);
-		$inventory->stock = $inventory->stock - (count($stock->quantity) > 0 ? $stock->quantity:0);
+		$inventory->stock = $inventory->stock - $stock->quantity;
 		$inventory->save();
 
 		return redirect()->route('admin.stock.index')->withFlashSuccess('Stock Updated Successfully!');
@@ -303,20 +299,34 @@ class StockController extends Controller
 
 					if($ingredient->physical_quantity == 'Mass')
 					{
-					    $stock_qty = new Mass(1, $ingredient->unit_type);
+					    if($ingredient->unit_type == $ingredient->pivot->quantity)
+	                    {
+	                        $qty_left = $ingredient->pivot->quantity;
+	                    }
+	                    else
+	                    {
+	                        $stock_qty = new Mass(1, $ingredient->unit_type);
 
-					    $req_qty   = new Mass($ingredient->pivot->quantity, $ingredient->pivot->unit_type);
+	                        $req_qty   = new Mass($ingredient->pivot->quantity, $ingredient->pivot->unit_type);
 
-					    $qty_left  = $stock_qty->subtract($req_qty)->toUnit($ingredient->unit_type);	
+	                        $qty_left  = $stock_qty->subtract($req_qty)->toUnit($ingredient->unit_type);
+	                    }
 
 					}
 					elseif($ingredient->physical_quantity == 'Volume')
 					{
-					    $stock_qty = new Volume(1, $ingredient->unit_type);
+					    if($ingredient->unit_type == $ingredient->pivot->quantity)
+	                    {
+	                        $qty_left = $ingredient->pivot->quantity;
+	                    }
+	                    else
+	                    {
+	                        $stock_qty = new Mass(1, $ingredient->unit_type);
 
-					    $req_qty   = new Volume($ingredient->pivot->quantity, $ingredient->pivot->unit_type);
+	                        $req_qty   = new Mass($ingredient->pivot->quantity, $ingredient->pivot->unit_type);
 
-					    $qty_left  = $stock_qty->subtract($req_qty)->toUnit($ingredient->unit_type);
+	                        $qty_left  = $stock_qty->subtract($req_qty)->toUnit($ingredient->unit_type);
+	                    }
 					}
 					else
 					{

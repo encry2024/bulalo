@@ -10,6 +10,7 @@ use App\Models\OrderList\OrderList;
 use App\Models\Inventory\Inventory;
 use App\Models\ProductSize\ProductSize;
 use App\Models\Notification\Notification;
+use App\Models\Setting\Table;
 
 use PhpUnitsOfMeasure\PhysicalQuantity\Mass;
 use PhpUnitsOfMeasure\PhysicalQuantity\Volume;
@@ -52,42 +53,56 @@ class SaleController extends Controller
     	$arr 	 = json_decode($request->orders);
         $p_avail = 0; //available product
 
-        for($i = 0; $i < count($arr); $i++)
+        if(empty($request->transaction_no))
         {
-              $status = $this->product_availability($arr[$i]->id, $arr[$i]->qty);
-
-              if($status == 'Available')
-                $p_avail++;
+            for($i = 0; $i < count($arr); $i++)
+            {
+                  $status = $this->product_availability($arr[$i]->id, $arr[$i]->qty);
+                  if($status == 'Available')
+                    $p_avail++;
+            }
         }
-
         //
         // check if ordered products is equals to available products
         //
-        if(count($arr) == $p_avail)
+        if(count($arr) == $p_avail || !empty($request->transaction_no))
         {
-            $order  = new Order();
-            $order->transaction_no  = date('y-m').rand(100000, 999999);
-            $order->cash            = $request->cash;
-            $order->change          = $request->change;
-            $order->payable         = $request->payable;
-            $order->discount        = $request->discount;
-            $order->user_id         = Auth::user()->id;
-            $order->save();
-            //
+            if(empty($request->transaction_no))
+                $request->transaction_no = date('y-m').rand(100000, 999999);
 
+            $order = Order::updateOrCreate(
+                [
+                    'transaction_no' => $request->transaction_no,
+                    'table_no'       => $request->table
+                ],
+                [
+                    'cash'      => $request->cash,
+                    'change'    => $request->change,
+                    'payable'   => $request->payable,
+                    'discount'  => $request->discount,
+                    'type'      => $request->order_type,
+                    'status'    => ($request->order_type == 'Take Out' ? 'Paid':'Unpaid'),
+                    'user_id'   => Auth::user()->id
+                ]
+            );
+            //
             // set stock use
             //
             for($i = 0; $i < count($arr); $i++)
             {
                 $size = ProductSize::where('size', $arr[$i]->size)->first();
 
-                $list = new OrderList();
-                $list->order()->associate($order);
-                $list->product_id         = $arr[$i]->id;
-                $list->price              = $arr[$i]->price;
-                $list->quantity           = $arr[$i]->qty;
-                $list->product_size_id    = $size->id;
-                $list->save();
+                $list = OrderList::updateOrCreate(
+                    [
+                        'order_id'          => $order->id,
+                        'product_id'        => $arr[$i]->id,
+                        'product_size_id'   => $size->id
+                    ],
+                    [
+                        'price'     => $arr[$i]->price,
+                        'quantity'  => $arr[$i]->qty
+                    ]
+                );
 
                 $product      = Product::findOrFail($list->product_id);
                 $product_size = $product->product_size;
@@ -102,21 +117,15 @@ class SaleController extends Controller
                         if($inventory->physical_quantity == 'Mass')
                         {
                             $stock_qty = new Mass($inventory->stock, $inventory->unit_type);
-
                             $req_qty   = new Mass(($list->quantity * $inventory->pivot->quantity), $inventory->pivot->unit_type);
-
                             $qty_left  = $stock_qty->subtract($req_qty);
-
                             $stock_dec = $qty_left->toUnit($inventory->unit_type);
                         }
                         elseif($inventory->physical_quantity == 'Volume')
                         {
                             $stock_qty = new Volume($inventory->stock, $inventory->unit_type);
-
                             $req_qty   = new Volume(($list->quantity * $inventory->pivot->quantity), $inventory->pivot->unit_type);
-
                             $qty_left  = $stock_qty->subtract($req_qty);
-
                             $stock_dec = $qty_left->toUnit($inventory->unit_type);
                         }
                         else
@@ -130,15 +139,35 @@ class SaleController extends Controller
                 } 
             }
 
-            return ['success', $order->transaction_no];
+            $this->notification();
+
+            $order = Order::with(
+                    'order_list', 'order_list.product', 'order_list.product_size'
+                )->where('id', $order->id)->first();
+
+            return json_encode(['status' => 'success', 'order' => $order]);
         }
         else
         {
             $this->notification();
         }
-    	
 
-    	return 'failed';
+    	return ['status' => 'failed'];
+    }
+
+    public function charge_save(Request $request) {
+        $order = Order::with('order_list', 'order_list.product', 'order_list.product_size')
+                ->where('transaction_no', $request->transaction_no)
+                ->first();
+
+        $order->cash        = $request->cash;
+        $order->payable     = $request->payable;
+        $order->discount    = $request->discount;
+        $order->change      = $request->change;
+        $order->status      = 'Paid';
+        $order->save();
+
+        return json_encode(['status' => 'success', 'order' => $order]);
     }
 
     public function product_availability($product_id, $quantity){
@@ -190,6 +219,59 @@ class SaleController extends Controller
         }
 
         return $status;
+    }
+
+    public function available_table(){
+        $available = [];
+        $total_table = Table::first()->count;
+
+        $pendings = Order::select('table_no')
+                ->where('status', 'Unpaid')
+                ->where('type', 'Dine-in')
+                ->whereBetween('created_at', [Date('Y-m-d 00:00:00'), Date('Y-m-d 23:59:59')])
+                ->get();
+
+        for($i = 0; $i < $total_table; $i++)
+        {
+            $available[$i] = $i + 1;
+        }
+
+        foreach ($pendings as $pending) 
+        {
+            $index = array_search($pending->table_no, $available);
+            array_splice($available, $index, 1);
+        }
+        return $available;
+    }
+
+    public function unpaid(){
+        $tables = Order::select('table_no')
+                ->where('status', 'Unpaid')
+                ->where('type', 'Dine-in')
+                ->whereBetween('created_at', [Date('Y-m-d 00:00:00'), Date('Y-m-d 23:59:59')])
+                ->get();
+
+        return $tables;
+    }
+
+    public function get_order($table) {
+        $order = Order::with(
+                    'order_list', 'order_list.product', 'order_list.product_size'
+                )->where('status', 'Unpaid')
+                ->where('type', 'Dine-in')
+                ->whereBetween('created_at', [Date('Y-m-d 00:00:00'), Date('Y-m-d 23:59:59')])
+                ->where('table_no', $table)
+                ->first();
+
+        return json_encode(['order' => $order]);
+    }
+
+    public function get_order_list($transaction_no) {
+        $order = Order::with('order_list', 'order_list.product', 'order_list.product_size')
+                ->where('transaction_no', $transaction_no)
+                ->first();
+
+        return $order;
     }
 
     public function notification(){
